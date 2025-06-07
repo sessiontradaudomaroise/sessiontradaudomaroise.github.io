@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://sessiontradaudomaroise.github.io/sitemap.xml
