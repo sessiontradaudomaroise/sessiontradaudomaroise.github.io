@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=860" />
+<meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+
+<title>ABC Transcription Tools Generated Website</title>
+
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #FFFFFF;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .container {
+        margin: 0px auto;
+        text-align: center;
+        overflow-x: hidden;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-top: 16px;
+        margin-bottom: 0px;
+        color: #000000;
+    }
+
+    h2 {
+        font-size: 16px;
+        margin-top: 8px;
+        margin-bottom: 0px;
+        color: #000000;
+    }
+
+    p {
+        color: #000000;
+    }
+
+    a {
+        color: #000000;
+    }
+    a:link {
+        color: #000000;
+    }
+    a:visited {
+        color: #000000;
+    }
+    a:hover {
+        color: #000000;
+    }
+    a:active {
+        color: #000000;
+    }
+
+    #fullscreenbutton {
+        position: fixed;
+        top: 16px;   /* Distance from the top of the page */
+        right: 16px; /* Distance from the right of the page */
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        z-index: 1000; /* Ensures it stays above other content */
+    }
+
+    #fullscreenbutton:hover {
+        background-color: #0056b3;
+    }
+
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+        background-size: 12px;
+        background-position: calc(100% - 10px) center;
+        background-repeat: no-repeat;
+        background-color: #efefef;
+        color: black;
+        font-size: 17px;
+        padding: 5px;
+        margin-top: 12px;
+        margin-bottom: 16px;
+        width: 350px;
+    }
+
+    iframe {
+        border: 1px solid #ccc;
+        background-color: #ffffff;
+    }
+
+    #footer1{
+        margin-top: 12px;
+        margin-bottom: 12px;
+        color: #000000;
+    }
+
+    #footer2{
+        margin-top: 12px;
+        margin-bottom: 0px;
+        color: #000000;
+    }
+
+    #previous_tune, #next_tune{
+        padding: 10px 15px;
+        background-color: #dddddd;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        z-index: 1000; /* Ensures it stays above other content */
+        margin-top: 12px;
+        margin-bottom: 16px;
+        transform:translate(0px, -1px);
+    }
+
+    #previous_tune{
+        margin-right:10px;
+    }
+
+    #next_tune{
+        margin-left:10px;
+    }
+
+    #next_tune:hover {
+        background-color: palegreen;
+    }
+
+    #previous_tune:hover {
+        background-color: palegreen;
+    }
+
+    * {
+      touch-action: manipulation;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <button id="fullscreenbutton">Full Screen</button>
+        <h1 id="title">ABC Transcription Tools Generated Website</h1>
+        <h2 id="subtitle">Select a tune from the dropdown to load it into the frame below:</h2>
+        <button id="previous_tune" title="Previous tune">←</button>
+        <select id="tuneSelector" style="margin-right:10px;">
+            <option value="">Click to Select a Tune</option>
+        </select>
+        <select id="displayOptions" style="width:250px;">
+           <option value="-1">Select an Instrument</option>
+           <option value="0">Piano - Notation</option>
+           <option value="1">Piano - Note Names</option>
+           <option value="2">Mandolin</option>
+           <option value="3">Tenor Banjo</option>
+           <option value="4">GDAD Bouzouki</option>
+           <option value="5">Standard Guitar</option>
+           <option value="6">DADGAD</option>
+           <option value="7">Tin Whistle</option>
+           <option value="8">Irish Flute</option>
+           <option value="9">Accordion</option>
+           <option value="10">Concertina</option>
+           <option value="11">Hammered Dulcimer</option>
+        </select>
+        <button id="next_tune" title="Next tune">→</button>
+        <br/>
+        <iframe id="tuneFrame" src=""></iframe>
+    </div>
+
+    <script>
+
+    const tunes=[{"Name":"AIRS","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAggEkASgGUiAaWHSgA&format=noten&ssp=10&name=AIRS&play=1"},{"Name":"Down by the Sally Gardens","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEARagHcwbKMjYtEINgGUIMGMoDiEeuGKSAshGx0CbagxVq2p6gFcMYdRpoYQRAErCAQWwMIlNhABYAenCiABlRSIAOIgBhYXEMCDpsFmxmbSIARQTwgF5E-gBpaRJoCgArAngCFzBGZnYGGGdLEmBTAEkpAbZUDGoyTIBbNn5SQeHFCAICMYnZvoWRqlo6NbIN+aGRqGWCADdqGDYANhijxZ36S+u72ro6eG0YeFQYCGQpwoeHgOHwxAAaqIiFIAKJsAA+bAAYgAmNiwqQY9HIgKItgAIXCbAC6LoeKRBPRAWRGIAzGwsUipDcETD4Ui0RisbCcRTCcTSWxyfiqSTabCGUzGayiEKkXR0RQ8WLFfiKAyCSS+aLqbiCXR1ArZXD8VzMdiUfyidrhda9fTGfiWWxhGzgBCAFIpFLwKGokhen3wABeqIRAA9EviozHo0iIzdA97fWHI-G2LGExnE8ng2ms5mczmkx6U6Hw4WqyXXWyAOrCAbsWTLYVyBRKeweb76QyGsAEAA0bCmyhg1HO6ggbTYI2ydBHIBALAAdEQG551BRxisQAvVN2dL2jAO2LIcog2DgWCw4GwCGA5ABaWSIHLqBhL1fr4SbxSWRcVAgPB1HHSc2BAZZkGHVsDyvSDJ2sSY5BsBQ4JYbwQEHH8CWcdgRhbaxkFaA5pwXJgrmwAhEBgmdz1UNg1AwYUAMfdgIEmJc1wbH8BgUCA2AYbAQBgBc6HbRRlDgjBsEnDBh1HK8JynGc5wAggWDIn8AhnZgRzHSCwFwA5qJcUTMGHajQIsBcmPvR9ZBfN8WHURAyO438HCgACpnUTSQKvbBPwgqC2Bg6w4MmM42GQ2RrD0uDZBAYJiAbXD8LPVtiOcMBSJnCicGo2iFwctgIBmBhnB0Gw7BcwwCA8n8ZHkSSu00Hs2AME8h30pTwLI2cWIXXzlw8v9t2oXd9wcLQj06vtjDPC9ApvO8H2fV930Er8xq8ny-OA0DlJCghoLKiKHDgCBEJi8ZZFQtqMKXbC0rwwbCLYbLcrK-LqEooqfoXejLzs+c2DYsrOJARqGzrXZrE7OsV0JZGAE1IJYHruESRIAE4gA&format=noten&ssp=10&name=Down_by_the_Sally_Gardens&play=1"},{"Name":"Jan de Mulder","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmIgBVhAKQhg2dEGwCyAVxiKMRAErCAgti0BhYRIwQ6AOjYAKI9VUECIALYQ8mAJREA8sIBi5mAUIEQAysL2js5uHhgANGxGiHIsBGyo1KjqEIYg6Yrp-jAQbmB0BUqBciFEymIA9OIAMsLcDQAcRACKbU0AvACc4gDSwgDiLiTQFABWBPAEDuVMrGwMMKrYdCTAygCSACL7GRjUZOYubPykB8dsUBBOqGdk17t3J1S0dC-n77cjidHk4AG7UGBsABsABYPkC2N96ODIbDpnQ6PAIDAYPBUCVkI8KHh4Dh8MRxqI6KIFKIKAAhNgAHz09IoejY9NEehpTLYlK5bB5lOZbAAev5RCLDjDRURxqzxpzubz+YrlTzRQq2bS6BRRVzNeNZXz5az9dTqaLqQyhSb+aJBcLVZT+v4AKJsQ4AZnGAFo2FrRG7PT7-YG+a6PV6YQG5TLaYmmWQoUm2CA9RynS7MxreQBdEigzAEbDMREOJyudyYNjCNgkMKUq02xkstlZlVB7MivkSqU0hOm4DapWGl3q8da826-V8qcAQgYuBAC+NcpHM8tqtbdu7NOdQZDMaD0aHDrP9pILZpS8wbhYEAXZBpVr5GfZyqFSsjsrCAC8TXzIA&format=noten&ssp=10&name=Jan_de_Mulder&play=1"},{"Name":"BOURRÉES 2 TEMPS","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAQgHkAqgCVFASYCiAZTYAmNuLUBZAAoaiAaWEBBIA&format=noten&ssp=10&name=BOURRÉES_2_TEMPS&play=1"},{"Name":"Je mène les loups","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwBmIgBVhAKRBsAtgAuwcuATYxqAV1TEASsIBC2jBgCXcgEwSiAYWEBNAG7M2AcS3YYVTGwAUdADkEKgYiuosGBB0AHQAlEQAssKWAPQALEQAMsLcqQAcRACKuRkAvNyilkQA0sK28iTQFABWBPAE2mCMzOwMMJ50JMCJAJIAIqNsodRkUfJs-KRjk2xQEAQEM2SLwytTVLR027vLE1Prmy4wbABsmWerh-TXdw-RdPAQMDDwqDAQZDrCh4eA4fDEAA+wjoAD4KGw6HJIYj4YjkWwKLC6JiyoY2Cjcfi3JYCWwADpEOEIpFk6noslYnEUPEEijpNjCFFEaHuUQIlGQvGiNyM2Gsig4lEgSx0Ukotz8snC0UoplsEBSzEcrlAA&format=noten&ssp=10&name=Je_mène_les_loups&play=1"},{"Name":"BOURRÉES 3 TEMPS - Suite Grandes Poteries + Reuilly","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAQgHkAqgCVFASYCiAZTYBmNuLUBZAApaAtGw0BXbCxBsA4hghg6IAmyPVbGbG7YBqNkUQaxgYZCIAaWEAQSA&format=noten&ssp=10&name=BOURRÉES_3_TEMPS_-_Suite_Grandes_Poteries_+_Reuilly&play=1"},{"Name":"Bourree des grandes poteries","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAWIgBVhAIWoBXDBhAg2dEATZkMEMGo2pqLTNnVEASjPmKAlyoDMEogGFhE7XQB0RAPIzMGZCIAWWE7AHpxABlhbgiiAEVQiIBeAHYAViIAaWEnAFsIACsSaApCgngCeV0mVjYGGDlsOhJgIIBJABF2tlQMai0IPLZ+Ug7utigIAgI+gZHW8Z6qWjo5sgWxrp6pmYA3ahg2ADZxLYmV+gOj05K6OngIGBh4VBgIZCmKPHgcfGIQGEAEwMYEAH00IDIYLIwMBQIoKghZChyKBqjh4Pq9zYYLo6IowLo4JAFAoEIA2tw2BR0cJKQS2NIAIK4sFEMHCADiQOZYJ5rIhXIodDBIDsuNUIrBFBZkqpbC5zK5EJACPpbDYFPRXJAopp6LBAF0gA&format=noten&ssp=10&name=Bourree_des_grandes_poteries&play=1"},{"Name":"Bourrée piquée de Reuilly","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwBWIgBVhAIWoBXDBgCXINqmwBHOSrZ1VAJRBzsMGMiL6Z8xToDMEogGFhEjBDoA6IgHlhRALLCtgD0ACxEADLC3GFEAIpBYQC8AOziANLCjgC2EABWJNAUeQTwBPJgjMzsDDDGdCTA-gCSACLNahjUZG7ZbPykLe1sUBAEBKhdZP2NQx1UtHST3TODbR2j4wBu1DBsAGzha8ML9Dt7h4V0dPAQpvCoMBDIoxR48Dj4xAA+wgDiAEFpGxvmwKAAmOggsHBaTBAF-aEUWzQoEUaF0cGqUF0YIUWEA6F-FHCUFEX4gSFI6SEnHg9GgmmIxng2lsQHA77cMF0AB6UNBIBJ33BYJAArBKO+AF0gA&format=noten&ssp=10&name=Bourrée_piquée_de_Reuilly&play=1"},{"Name":"CHORÉGRAPHIES","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAwgAkA8gCUAkwHFFAQQAKsgJIBRAMpEA0sI1A&format=noten&ssp=10&name=CHORÉGRAPHIES&play=1"},{"Name":"De Jagt","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwB2IgBVhAERBsAUhDIsiAJWEBhGhgCXZDBFSJsIIhuESDdAHRsAFBuoBXAgRABbCHkw9eAFgBKIgB5YQAxAzAKUwBBcJgIMDoMU2AAUTp3Zjo2OjlHFzdPbwwAGjYAIi1ElgI2VGpUJwTsFLq8urCEzyT2uQjE6IrygHFEnO4ADgBWADZy1ABmACZZogBZYVmAekmiABlhbl2iAEVhRd2AXm4VogBpYTT3EmgKACsCeAJnJKZWNgMGBObB0EjAdYASWkkPqGGo+gg7jY-FIUJhbCgEFcqHhZBR4PRsKotDouIRBLR0NhWNcADdqDA2LM-ITqWwSfQGUyWa86HR4BAYDB4KgEsgsRQ8PAcPhiAA1I5ENJsAA+wjYaWWACE2NrljE1WwRos2DEDUb9YaRsswmruMbbZrlirhKrlprTWFliM2ABdNVEc3Wp2qx0q72+sPBx12sM2iM+o0xFOxo1atgALzYkcDKZDcYTOaT0dTNrjnoAtJrMyrVUR1VrdVajSazRawy3y-a01rXe62AAdZWLatpWvp03SU1htKj511v0keXyDQaeCK5bL1frzPqgAesyNh+PR7DJ7dbDYJ7D27X8EzZ+vT5vz9P79Vw+AK-vj4-b-PM9hDvXcXzA99L1fKCnyIAB1YR1ggNg3CcDAWHeEByjICA5GQOR3BAAAr8o4OEGIYDqAB3ZA2HeJRwHKIUqJouiyHAABuNhSMQ5CQFQ9DMLYbDcPwoiSPg8jmNo+iwDYeEklyOQCBYIjbFIxRyk8Xj+IwrCaPANhsDwbxxOEYIwEzAyWEQJxZOwOohTYFTciM7wuIkii2GotgshAFTZKgEBWIMzNkDANT4PuDAnDQdhHLyVC5DpRInOoTAYDSlIWBU0yopi1A4qZBKUjYZLZJYTKMswNKIoQpCULQ3ShJwtg8J8sT3LIzzvOCsBGO6liZNMySvMGtjZPknI8mQlTCOsUjSP2Q0NAACRiABlda0nm+CePQFhsGcghAGVAVDyjpEwwAISsWCcNgIDpEAKDYMBnDqKhsTcDB7qcCrUNyO6ElK7BhRAAB+TrghBTSkP2w6lNOso2AAA5et7FKcfc2AAQjYAA5agWBKwKMGiCA7pAZSnPhVBUqcBgGDuhp-pohgIFaOQgY+1wQFqgAFT6QGzP6VIIco-qwZwspy+pBeF5xRfFqWMtQ5xar2vz4eQxHzsu67bvux7ntelwOUQQXvvJiXFLYIGLtBsGgA&format=noten&ssp=10&name=De_Jagt&play=1"},{"Name":"CHANT-HORLEPIEP - suite Zoete Mariton et Horlepiep","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAwgAkAggDlxAWlkB5AEoAZAKIAFAJIG2KtgQCu2FiDYAtaiBtsAshAzXmbJ21m04qNggqEQA0sLyQA&format=noten&ssp=10&name=CHANT-HORLEPIEP_-_suite_Zoete_Mariton_et_Horlepiep&play=1"},{"Name":"Zoete Mariton EDC.84","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmXgFYiAFWEAtaiBYg2AWQgZsLZmwCiAEQDCAOgAcAFiIAlYYcQRWRQ8OkYIdY2yIBBYQDEYBzoMECIAeX83MApQgDlbezACHUNqAFtsAEcAV1CAZWFdOjTmOjY6FVTsggIQNIg8TAAaNgAiOwcWAjZUalRswOwQ7orugIh6sDoRlT8omNaWgHEgnlMJADYWgBlBPYBJADUe41ELIn1hRBYWVAJhAHoHgHdX42RqbJZsqBBjCnSLwgLCoAH4AG4AXg20lEFAA6voAJyqcEgVRsAC0bFc2GobG8MAYITK+nAbDC2QqYAuwgAFMg2AC0qhNN04EzmCwQlROgBKIiqMQPSzbYTcB6mIgARXFD1EkNM-AA0sIliRoBQAFYEeDJbJTJisNgMGDZbB0EjAVT7fT7HoYahkNxpNj8Ug2u1sKAQGqsp1uq2e+1UWh0f1kQMe232n01cHUGBsDaWaNe0P0BNJlMauh0eAQGAweCoQLIH0UPDwHD4YiHcVEAA+wjoFDYACFvGxGx3RAS+z2luZu2wh2xhI2ADpEJZd9ttnt0PtLkcgYeL5dlDflAc7pntkfecyYxtHxtNtVzhd7igH7e37vtvveAfccoqVsjp9M3d0YcT6c2AAbWXD9r2-F8RyHE8x0bABdIA&format=noten&ssp=10&name=Zoete_Mariton_EDC.84&play=1"},{"Name":"Zoete Mariton EDC.84 (et contrechant)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmXgFYiAFWEAtaiBYg2AWQgZsLZmwCiAEQDCAOgAcAFjYAKJWwrMWGEFQisAlEQBKww4lcsiQ2FpDAg6YzYiAEFhADEYVzonIgB5ONCwChAiADkfPzACHUNqAFtsAEcAV2yAZWFdOlLmOjY6FRKqggIQUog8TAAaNgAiX38CNlRqVCqE7CdJ9sn4iD6wOiWVWIyskeGAcUSeUwkANmGAGUEbgEkANSnjUQsifWFEFhZUAmEAej+AHdgcZkNQqiwqlAQMZ7KUgRAWFQAPwANwAvGdpKIKAB1fQATlUqJAqjYAFo2CFsNQ2FEYAwnK19OA2Ckqu0wG9hFZkHYyqhNJM4PzWE4XO4iKoxH9zERLsJuH9TEQAIqKv6idGmfgAaWEBxI0AoACsCPAilUNkxWGwGDAqtg6CRgKpbvpblMMNQyKFSmx+KQ3R62FAIN1BT6Ay7g56qLQ6JGyNGg+7PWHuqjqDA2Gc5amQ-H6Fmc3mjXQ6PAIDAYPBUAlkGGKHh4Dh8MR7oqiAAfYR0ChsABCUTY3aHojpE7HB0s08swm7AB0iAcR4OB2O6BOt6O2CBZ21t61N9up4e7IPd1FzOTu9fuz2DWuN+eKJeTxfR4OJ1Ep9w2io-a7t+dhnnQ85LkQbAANrboBL4gb+u4zreM6jgAukQnaiI+ZDwbuO4UGeg4HiRC7LuuAG7mQE40aOEDmN2ZA3mOzG3nRIB0GOFAsXYjGPpR7RMROnHCXuXGEaI3b-mQEBsHhBGiCAUnMQutFyQpJ5Ed2JG3iRD64vI2C2O0bAaKUKjoJg7SUtCIAEMoYDDPoxltBAmBsAkYBkFsbAOaEyjye5YBsAA3EQhlyHyrKICAUDQiFBBUMZGDySArIOelYCsmUbCQB5hjhj0ObaCogWyeAxgRfIiiBeomjaE5agaFozDDPVWgQLgIDDAoSgqH0DVtWwjXDI1VWGWw+jglkzVDWAESLoubD3NQyAgAAXp59lTBAVSoosdixaie0AB5+WVoQAHfZalIowMwyamQkbDehCKihWwtwwJMYAAOQOF69nVJZ4ZUagECogAl1M4KpdWcCpSaXTVH9AAHbCFd0IAwBE01VLNHWjXNrVNUTXXZYMdAzSoRNtaN41AA&format=noten&ssp=10&name=Zoete_Mariton_EDC.84_(et_contrechant)&play=1"},{"Name":"Horlepiep","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFw8iAFVEAJWnFTYQqIgCVpsxQtRsA9GxkYw89EQDCw8Rgh0AdEQDywgAoRkBNgCEIxALKiALNp+RAAyotzaABxEACLmGNjUbACCMAwYIHRs0eBsdgCudDmILCyoBMLa2gDuNdbI1HkseVAg1hTUALbVECxUAPwAbgC8AGziAEwUAOrRAJzeAyDeRADSoiYkBFW4ZGzWAMwk0BQAVgTwBA1gjMzsDDB52HQkwN4AktFvbKgY1GSWHTY-FI70+bCgXgIPz+QJeoK+VFodGhu2Brw+XwhBAIA2oMDYIyCIIxbER9Fx+MJRzodHgEBgMHgqBgLghFDw8Bw+GIAAp9gBxJLuAA+ogo41JEvFbDoFGFdBGMpAwrYDBAMooHk1srYwvcmX5EsNbD5gpFRGllolsvlisKKrVGq1Mvcuu4krYIClEtNQuEwu9nsDZAYAF1dURRSBNfzNSBdmqHZl9aqIGwQyro2xY56E+qVTr3ElsxKQxGszn46rlark5kGGmM7nq7WPJlhdxpV6PSH-YHuxQ-MLQ0A&format=noten&ssp=10&name=Horlepiep&play=1"},{"Name":"JIGS","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAUgEkA4gGUiAaWEBBIA&format=noten&ssp=10&name=JIGS&play=1"},{"Name":"Morrison's Jig","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwBOIgBVhAWVoZsBZgHICbAFLYyRAErCNWgMLCJGCHQB0RAPLCAklghg6IEqXLy6bALQAONqggMFmJpYQA2AHofIgAZYW4oogBFYQBmKIBebgAmfgBpYQBROloSaAoAKwJ4RQBXJyZWNgYYWuw6V2lbABFbfwxqMlMAWzZ+Ui7etigIAgJUAbIxzp6+qlo6BcHlidXp2YIAN2oYNjCAFhWp9fpj04uyujp4CBgYeFQYCGQZijx4HD4YgAHyKqTYACFChC2MC2NDCmwAIIAMW6sPh4KhMOBdAoMNR6OBAB0iGxMZDoRiEci0RiAOLglH0pHAiFI+lsFGFbrCYFENkgEDNIUYtgQUUMECeOEQyWi4EMCBLKUy0ly4VS4VwiWa6UYshSth0bJIjHszncon8jUi7Xk3UimWQ+XapUMY0gD0kohkcGG+3OD1kbLO6UUY2m80crk82EAXSAA&format=noten&ssp=10&name=Morrison's_Jig&play=1"},{"Name":"Billey Keirn","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcATEQAqwgELYYcZGwDSIbBjBThAcQgtEmXGTa42+kGxkQsIZEQBKwgFLYyAfiIBhYZIwQ6AHREAPLCAJJYEGB0FmEEcGzUDGwAslFEKcIAbAD0ABxEADKi+UQAisIAzPkAvNwALPzKwgCiALYk0BQAVgTwBNQArtFMrGwMMIPYdCTAKWEAImFsqBjUZH5tbPyk80tsUBAEBKvr27N7y1S0dKfGO3OLy4fHAG7UMGxZ9RdPbNf0d6fb6dOh0eAQBTwVAwCDIQ4UPDwHD4YgAH2EbBaYgAYmxtGIAIJsNGWSpkkn-ckyImUtE07RY8mk7F4gnE0kyckgZlsHlsOiVNEgLLCNFEOhiGT4qWUwUC3kgMTJMgMCyk+VckncPnKtiq9UKimkpV0f6y0mE8lWthithEADaYl1KrVcupYgolK1NrR2nJOOZAF0gA&format=noten&ssp=10&name=Billey_Keirn&play=1"},{"Name":"Droneless","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFw8iAFVEARDMxBwCxAEqiAVtjJEAwqIAyEAO4ZwFEAFoAsrTIQwbAIJgCLECCJTRLRCDYBReWwA4hi4dJgEADQ8AJzRAGxsEDBQAK4AtlH2AI4pEGkQIWBuFqJxAPQAHES6otyVRACKwgDMlQC83ABM-ADS0mm4JNAUqgTwBNQpYIzM7AwwKdh0JMAWAJJSa2yosmQYeWz8pOubbFAQijvUZIcrJ1tUtHRXN0erG1vnigBu1DBscQALHcPmxHvRfv8gUM6HR4EkYPBUDAIMhzhQ8PAcPhiAAfYR0ZpsOgUey4ijNCidYnkolUui4gBC9kCQXsjNxREJxNJuLYAG1uGwQM0zMLqQxcSLhSTcXRqfYHArhLjqSBqayqTT1ZrOgy6HFcZz8fYwmwGCAGYyLebLbjApaZRRcfZHSLOaafBaGfZSebffaKHQnbihfKfPK6Cq1c0QBajUA&format=noten&ssp=10&name=Droneless&play=1"},{"Name":"SLIP JIGS - Suite Butterfly + Fisherman's","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAygBkAkgAU2AKXkBxaWwC0baQFdsLEGwBC+lsYwMYyNgGo2AMWwFEmALYQwAcmIBpYQBBIA&format=noten&ssp=10&name=SLIP_JIGS_-_Suite_Butterfly_+_Fisherman's&play=1"},{"Name":"the Butterfly","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmUUQAqwlohBsAQgFcWLTAxjIiAJWEBlHKjYApbGRIL9S7GsUq1GDcjYBqNgDFsBORgC2EMAByAh4AegkAeWFsDBAYALoiAEVhAGZQgA4AXm5RfgBZYQBOTKIAaWEAUV8SaAoAKwJ4AmolMEZmdg1rRNJ8gEkAEX62VAxqMgwIXzZ+PqGRqAgCAjGJ2ZJgAeG2Klo6NbIN+Z2llYA3ahg2ADYAFk3tkb36S+v72ro6eAgYGHhUPFkEsKHh4Dh8MQAGrCbhEAA+wgUokqbAA4iiPKl4cjURjUe5KoMcZj8ViSQA9ChsOiiBRsACC7kGwnhCKRompIFEDDYZGxyOpZFE8joCgZJK5PL5ogg8KgsplovFrPZClSilEDPRWpxGsUDPpYol6s12oxJtEdCVNJVbOAUOMAGEnfAYRIHc7XQAvIpseFsAAefoDwf9Qb9wmEJEdLvgvvDYdDIYjbCjMa98ZTSdTybT8KAA&format=noten&ssp=10&name=the_Butterfly&play=1"},{"Name":"The Fisherman's","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmAMxEAKsKmIQbAGLYC8jAFsIYAOTEZchQHVEuMMjYAJbDBgE21BmwAyIbCwzZ1RAErCAyjiobABS2GQkAEL+AK5uChHRLCyYDDDmANRKKmqaOnaiAPSiRACKwuIFABwAvNyi-ACywgCcVUQA0sIAIiTQFABWBPAE1NFgjMzsqbF0JMANAJJdC2yoGNRkGBDqbPyki8tsUBAEBGsbu3MHK1S0dOdkl-tLK8enAG7UMGwAbAAsVxebFu9E+33+vTodHgEBs8FQMAgyGOFDw8Bw+GIigAghElLilABRLoAHxxePJbDoojoZIJlMUxJJDBAdDYrIobAi4mEJKIDFEjhALKpohAzMFVOFbDILIlQpF1IiJOxii6bC6OK5omxfIFCoU1PF+qljll4ogsplitEyrYqvVmux2t1AF0gA&format=noten&ssp=10&name=The_Fisherman's&play=1"},{"Name":"MATELOTES","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAsgEFxAUQAyAeUUBlIgGlhsoA&format=noten&ssp=10&name=MATELOTES&play=1"},{"Name":"Maclote d'Habiémont - (Matelote de Wandembrile ?)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcAzEQAqwgLIQKMaixBs6AcgAS0bAEuAts3YBaNgAo5yxctUqA6hDB0QeqBmxw2AfgCUbIgCVZCEslECIAYWFJDAg6ADoiAHlhACEQGDJsAEcAVzCAQWF7GEUwbDCAEWFwirYAIh0KahzrGAg2ADE2xwwQOrYNEHZ-EByALxA8aloAGjYABQxqOhyKFmxmAaG2EfHJ6Yw2AAO2Cpz8TFyQObA4iRlhACYAegAWIgAZUWfuADYiACK31eAF4AJyPIgAaWEAHESNAKAArAjwAjNRxMVhsBgwHLYOgkYAyACSFRJbFQSzIMT0bH4pFJ5LYUAgBAIVOoZHpRKZFKotDonO5DOJZIprPZADdqDA2L93ozxWwBfQZXKFQi6HR4BASvBUG1kKyKHh4Dh8MQAD7CNiwx6w-JsFKPFJOq12x75R7Oh0pNgeuiun32l0B7hsfKO-3eoNsYRWn35V52lMAXQDRBtQZADDYZEeDBUgceIB9ZbjJdz+cLxdUjwoPpSKatAB0iEG4xWfR7G2HvSkKAH62HQz3IynYSmEyRI7apZgCBswJSIDkYLObZ7Hb63cP7d7nflB8Og6Pg+HI4843QKHuE0nJy3Z4U2ARlKhEA5ynNSzj5Jstqbra9o7i6e4egeTbHkOJbnmGVoRsmkZ3k6D4TqmAZAA&format=noten&ssp=10&name=Maclote_d'Habiémont_-_(Matelote_de_Wandembrile_?)&play=1"},{"Name":"MAZURKAS - Suite Saint Genest (Sol m) + Limoise","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAsgEEAWgFUASgGlZAZTYBaNhoCu2FiD0Rc7AOLgQBdgAoN1GGwC2ASjYBqNgBlsL6mwCECJVYVkgA&format=noten&ssp=10&name=MAZURKAS_-_Suite_Saint_Genest_(Sol_m)_+_Limoise&play=1"},{"Name":"Les écoliers de St Genest (Sol m)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcALEQAqwgDIgCbAJcVqOTArog2AZXYBxcPPYAKbarYBbAJREASsICyEAF4BXDHghEAwsL3YYOAVvAAkAQQAhAFEAOTDJIgdhAGYAegkZUVSADiIARSyxAF5uACZ+AGk-CxICAHdcMjYAOmSSaAoAKwJ4AmpXMEZmdgYYV2w6EmAHAEkAERm2VAxqMgwICzZ+UlmFtigIAgJl1a2p3cWqWjoTpu3p+cWDo4A3cwA2CR3Htiv6N5gbE+7TodHgEEC8FQMAgyAOFDw8Bw+GIADVREQ9GwwnoAD7CNh0UqErQMMi4wnE0FsEB0XEUKkUNgRMK4iLEvRYnG4ohEklsMm4vl82n0xnM1ncPTJNhcrHCXEc5J0NhkBgAXTYPPxIGJtJpDFxZGJxoFICF4s0QplKrVPN1NJVIENqrEZotvwi2IiuO42OVqoYCo571x6pIqIAUt5vPB0aUI9HY85kviAB7vLVsDNZnMUvOJmPwZyZ-Ol7PlnMKita4QAHULsfxJdzlbbWsb8DYLbLrb71bz4eAbCTbAJJDYqImimobEQLBYqGEqVSdTXzWQ-RYrigIGaKgsq4gLCoAH4XkUCLxXIJ4ABWCIzbDIMITgAKK1Q1AI2BY2GYhIAORhBg6xgGQIAWOA7AEvOi7LqkBDNJAoHyFQ2AMAwzQMBgIB7jhqSoBAEHJM084WDAQA&format=noten&ssp=10&name=Les_écoliers_de_St_Genest_(Sol_m)&play=1"},{"Name":"L'Inconnu de Limoise","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcArEQAqwgDIByAJJgKzMAFc2dEGxnYAttWwEQRAErCAshABeajHghEAwsIBSICGAC0AMQyeAc8MCNgAiKwAPajVQtgAJAFEFADlJAC0E5KIAZWFJfzoAOjYrMhtcEAAaeNoQggBLjGxtUJZoGAgWOxBuUOruAE4BsTYAejYJkHYAd1nCumxO6gArakKVPSIAEWEAaQB2MPQWbBZtAjVT7ShojBuwSCMQPrYAQQtJV7Zkp15uADY2AAKQYDbgASiIFmEAGZRgAWIgyUSjAAcRAAiij4QBebgw-i7YROEgEaa4MhsQowkjQCjLAjwAjRMCMZjsBgwS50EjACwKLYKNioDDUMj+PRsfikfmCthQCAEAgisVS3myoVUWh0FWU6V8gVChVKgBu1BgbH+iJlhrYWvoZotVtpdDo8AgMBg8FQHWQCooeHgOHwxAA4na6GwAD7CNggABMcYobAYkajIBhcZTlKjKcTDG0dGTuboibo4YoabYRATSZTaYzWYYObzKcLxe4dBhFcjwijibIme0zbYAF1o0QY9A7XIoGxp7nBym41WKAAhCN13OhxMURNrxNRoivROvDeV6N2-enw-cNgH+9fNfFzRD7NsPv7p-JrTRiiAqNRyIAB1YQFAtOhDHYSCMD0bAMGqLRUEuEIWGidgKG0M49FQYhQLXZowDYMhwBOPRSOqZk1FQ0UjGFZo6BCX8zgwDATFAgA1OQYAAA7YABHNQ5GYNg4E0RpPBI6p9FQc19FIkDhAxNQQE9QsMAAF7Eug5GwOh6iqTQ5CoSTMCMih5JOAALtjFK2EA6E8OoIDYNC9CgQy0LUDD2TYtgCBclgACuzkUgB5IjAtFNQTXqfyROMNQLQVMoSMU7IXJUDAwBAPRqMMgK7UQGztDy4wWFC0DlOwecKA2VAIDIHL4qI8VPEjM1kEa9jhEUpwIAwNgRLAOQXIakJkNEkA6nqBq2IwRSEgwuRpvYdBvK8EK-I8iA1BUNRUDYOCQDUCJ51wAhsHCoi4BCKLolighpJgJjaHI1hNCcqajqC8jRNOPq5HqNpTmFE6WE2lg-PGtg1CIvQIAAO6hkAvGZB4ToW0CrDo7ALQgfQCYw84IAoDA4pubzNGuYJFLhsGNA2P64fOahMYElTROEoiTXB4iBq0QaRSspjWau4BEAq1BhFGUZZmmeZFjQ1Z1moPRRjaWBOm6AhRhgLxcBUB41C8LQvBwAwnlGZYPG8Bh-GUYIvARqITcQEBcBYaxwEKSW9BgIA&format=noten&ssp=10&name=L'Inconnu_de_Limoise&play=1"},{"Name":"MENUET-CONTREDANSE suite De Gruijtters 70 et 39","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAsgFEAcgFVZ4gLQBhAPLzxAJVkARAILyAyrLYEArthYg2B+wHEMNgFYs7GAmwDsvNhB2AGYATiIAaWEjIA&format=noten&ssp=10&name=MENUET-CONTREDANSE_suite_De_Gruijtters_70_et_39&play=1"},{"Name":"Menuet JDG.70","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmAGwBWIgBVhAWXABXEOwBSAEQDiAOgDs-AEoLlqkgDkTYFSyIBhYTIwQ6OogGVha6oghgwIARsdCBsWhhK2ABWLCyYBAA0bBggFCrYMGwARACCYHR+cWBJOqVJAG7UtMHgbFAg0RCY7NQMcWx4MNR4ALQEqBlZSXnl8Tx6ACziHsIAFMhsFNQAtqgY2EFwi8wsKVSFAJRE8sIAzAD0E0QAMsLc5wAcRACKZ5cAvJLTANLCdiTQChRAjwAjUJT5JisNgMGCROgkYDyACSGmRbDW1DIzmWbH4pBRaLqEAI-QwWLxiMJ6KotDomLIlIJqPRUBJBEqmXEV2ZRNp9E5bG5ALodHgEBgMHgqBgEGQbIoeHgOHwxAAanciAAfYQUURaUR6rV0fWiE1atggUQMEB0CjGighEJagA6RD1BqNJoN5st1tt9ro4mEWu1whADDIoijWqjNoYogtIQTCYtCdtVtd7tNerYSdNvqtNudi2DWqAA&format=noten&ssp=10&name=Menuet_JDG.70&play=1"},{"Name":"Menuet JDG.70 (et contrechant)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmAGwBWIgBVhAWXABXEOwBSAEQDiAOgDsvNgApVbCsxYYQVCKwCURAEoLlqkgDkXYFSyIBhYRkMCDodIgBlYTVqRFswEAI2OhA2LQwlbAArFhZMAgAaNisKFWwYNgAiAEEwOltcsEKdZsKAN2paJPA2KBAsiEx2agZctjwYajwAWgJUMorCmta8nj0AFnEI4SNkM2oAW1QMbES4PdZi2PsieWEAZgB6NaIAGWFuB4AOIgBFe6eALySTYAaWEfhI0AomQI8AI1CUtSYrDYDBgGToJGA8gAkhocWwjtQyMF9mx+KRcfiehACLMMMTyViqQSqLQ6ESyEzKXiCVBaQR2uVxM8edS2fQhWwRZC6HR4BAYDB4KgYBBkPyKHh4Dh8MQAGrvIgAH2EFFEWlE5uNdAtoltxrYIFEDBAdAoNooyWSxoAOkRzZbrbbLQ6nS63R66OJhMaTcIQAwyKJk8bk66GKJHclM5nHZm3c6-QG7ea2Nm7WHna6fWYY3HDaJ42ZROGW+XUq2AEKty0dihrNgAPUzHbI4n7omd1s7Pb7jvNmYgWbY47Ysfj5unK6qoiqa2zg5nc6tK63p8dlpP5fNADE7f2J7GgA&format=noten&ssp=10&name=Menuet_JDG.70_(et_contrechant)&play=1"},{"Name":"Contredanse JDG.39","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmAGziiAFWEBhZiwwg6EMARBsAUgBEA4gDoAzAE4iAJXmLlq9SCJzh0jBDoGiAeWEAxF2Ar2AMrCWtSIamAgBGx0mnoYAK7YAFYsLJgEADRsyhQJINgwbABEAIJgtulg2Qa12QBu1LQx4GxQBckQmOzUDOlseDDUeAC0BKiFxdnl9Rk8AOwALFLBABTIbBTUALaoGNjRcJvWIFRqLACURAAKwqWlAEIPRACywosA9ItEADLC3B8ABxEACK-w+ogAvID+ABpeQkaAUZIEeAEagJCpMVhsBgwJJ0EjAF4ASR0JLYe2oZBc2zY-FIpPJbQgBHGGGp9KJTIpVFodCpZC5jLJFKgrIIjSK4m+IuZfPoUrYMsRdDo8AgMBg8FQMAgyHFFDw8Bw+GIADV-kQKKIADo3O5EAA+wjYZEWuI9TrYKhADB9ogYom9ZEDogDdGD3E2DwodE2oj0omETvDFHEbCTbAAumwnQ6HmxncIGB6QF6YnHNJGQOGndHIza2A9RE3vXQqzFRLWU+HG33RC3vRRAXns0A&format=noten&ssp=10&name=Contredanse_JDG.39&play=1"},{"Name":"Contredanse JDG.39 (et contrechant)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmAGziiAFWEBhZiwwg6EMARBsAUgBEA4gDoAzAE42AChDsKi5VTUsAlEQBK82yrUaic4dIwQdAZEAPLCAGIBYBQgRADKwlrUiGpgIARsdJp6GACu2ABWLCyYBAA0bHa5INgwbABEAIJgqqzgFQadFQBu1LSZ4GxQNQUQmOzUDCVseDDUeAC0BKi19RXN3aU8AOwALFIJ5shsNgC2qBjYGXAnHvaszgAKwo2NAEJvRACywrsA9LsiAAZYTcP4ADiIAEVQX9RABecH8ADS8hI0AoBQI8AI1FyLSYrDYDBg+ToJGAXwAkjoqWwLtQyAFTmx+KRqbShhACMsMIzWRSOXSqLQ6AyyAL2TS6VBuQRenVxICpZyRfQFWwlei6HR4BAYDB4KgYBBkLKKHh4Dh8MQAGqgogUUQAHSIz0aRAAPsI2GRdsT-Z62CoQAxg6IGKIg2QI6Jw3Qo9wTm8KHQTqI9KJhJ64xRxGxM2wALpsT1u4RvNhe4QMf0gQOZVOaBMgOOepMJp1sN6iLtBuhNzKiVvZuOdseiHtBijg0tFoj20SOl3lj3e7sZuONSdRp2Fp0Jz2tyO+0Qx9snfNO0eX8PF0vlz7ehM99NOz16K+JjfbguiAB64RRgW+YjjmxLDnGkbnic4KekWQA&format=noten&ssp=10&name=Contredanse_JDG.39_(et_contrechant)&play=1"},{"Name":"SCOTTISHS","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAygGEA8uPEBJaQAlpRANLCAgkA&format=noten&ssp=10&name=SCOTTISHS&play=1"},{"Name":"Adèle blanc-sec (Sol m)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcA7EQAqwgIJ0AF3DawIYCgFoCICmwAUAZWow2AWwCURAErD9FaixbYCiIgGFhAMQwBLut4zYOgAKMpYAkvpEAPKeGKoUIET6wpJxdAB0bACyEGQQAF64IAA0bAAStARsBP7YIGwARCzQMBAsAK4YINwNpdwAnP0ArERBsjIAQhNEWcIATAD0c0QAMqILABxEAIrrcwC8-csA0sIAIiajsiTQFABWBPAE1O1gjMzsDDDt2HQkwFkwmcwmxUBhqGQ4iY2PxSIDgcoIAQCGCITD-vCQVRaHRUWR0XCgSCoEiCAA3IxsABsABYMUS2Nj6BTjLSbnQ6PAIDAYPBUK1kCSKHh4Dh8MQAD7CNgeACiHhkbAA4h4lRM2BK2DI5rK5mxdaqNdwtQBmHQTSY6TUyDZsYQSvXalX61WKzVnW0AXQ1V2mUrocwo6stdA1ystWppYYmcxkSv1cxjRq1Stl8Y8OrOdodKflbDOUYlnpIxzEiOMEwg2B5IHaxl4NIWvD16jYDAgCTYrlKYGobDEfUwICAA&format=noten&ssp=10&name=Adèle_blanc-sec_(Sol_m)&play=1"},{"Name":"La Saint Julien","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcAHEQAqwgDIQ2AZQi52AKQCuOcEQBKwhRWosW2AoiIBhYQFEAtrYhh1IGGwAKAQR0BJBUQDywgBiGI4UIERuwh4eAEKxRACywgBMAPQpRDKiaRIAijkpALwAnJkA0sIA4rYk0BQAVgTwBNTqYIzM7Aww6th0JMCJ3gAi3myoGNRkobZs-KTDY2xQEAQEk9Pzg0vjVLR0m2Tbi6Pjq+sAbtSuAGwALDtnbPv013ePwBB0dPAQMDB4KgYBBkKsKHh4Dh8MQAD7CNhVADMsTYHiqcTYsLYdBSFFR6Mx2I8SIobFicTJsO4bBAdHxaIxqOEsJStPpBNiFDoWLYAF0iPCQEieRQUnTeWK6CA2GQUgwZbC6KScRTUdTEXEeWqqmwWWyPClDYj7li+UA&format=noten&ssp=10&name=La_Saint_Julien&play=1"},{"Name":"Le Canal en Octobre","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzcAnEQAqwgDIg2AYQiQYbcGwDyFFtSgYQRAErCAyhWosW2AoiILhAMQwBLus4zYKbAAoBBQwCSJkQmwpIYEHQAdGwAshBkEABeuCAANGwAErQEbATu2PIARCzQMBAsAK763EUZ4mIArEQAIsIAzO2SbEUYlfJ08jAA5NTWIBCVRWxOrgVe3hAeBBm+sZK+bLy83GwAFOIAHADsAJRE3sK+vgBCN0SxwgAsAPRPRDKiL4dEAIpfACYALyHAFEADSwgA4gBbCAAKzYFyuJGgFHhBHgBGolTAjGY7AYMEq2DoJGAsQCLQCbFQGGoZAiMK25Mp1LYUAgBAIdIZLNIbJpVFodF5ZH5FKpNM53IAbtRVAA2d4CqVsYX0eVKlWROjwCAwGDwVDlZCcih4eA4fDEFoAthQzYAH2EbBu7S8FBuvihbCdbo96u9vv9AFEHFCbmxfO0Q7sI+G2HbHWxhE77VDDmw2ABdP1EF10QNen1+thFz3BsvhyPR2N++NQxN2m5eNMZrN5p1AA&format=noten&ssp=10&name=Le_Canal_en_Octobre&play=1"},{"Name":"Plante un chou - Fraternelle des cornemuses","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFwAmfgBVhABRgRWINgFcwbKtSVsAtGwBiGCC0xgQMOGzogCa2iYC2SglaIAlYQGUK1Fi2wFERADywgBCEARObACCSgBumGQmRADCwkQAsmIA9AAsRAAywtxZABxEAIrZOQC8AGwArETSwlFRISFEANLCyXbYAB5NLSTQFABWBPAEGmCMzOwMMErYdCTA6QCSACIbbKgY1GQGdmz8pJs7bFDhBPuHp2sXu+r0d2QP59u71xGx1DBsWp5T6XF50P4AoEjOh0eAQMzwVByZDXCh4eA4fDEAA+wgA4lE2CE8WxsWpRBZFGS6BQibTqaI6BSyQSiSSyRQQmo6KTuGwQLSaaSiaI8RThNiKQKLFyOTk2ABdUlDDq4siiBjMylsBg8snqzXCujy-UMEB6tRcih6vnSoVkkKi8WSu2ytQmhVAA&format=noten&ssp=10&name=Plante_un_chou_-_Fraternelle_des_cornemuses&play=1"},{"Name":"VALSES A 5 TEMPS","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAagEEAMgGUAooray2AVjbjlAWQAKiogGlhFIA&format=noten&ssp=10&name=VALSES_A_5_TEMPS&play=1"},{"Name":"Valse à 5 temps","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFxsATADYiAFWEA1CDAIg2AA7YBWNixABbVMQBK8xcs3a9BogGFh0jBDoAaNgEEMDsGT3h2ABQgWDGwKPDYAIWoAVwYGCHoiABE7YOo2AKCQsMiYuPo2QGQCNkNoQMxsFQBaNgBZajpFdLhcACsQKMLavwApHm4+AGZ+GtENAHoADiIAGVFuSaIARWEByYBeCf4AaWFrEmgKFoJ4AmiwRmZ2Bhgo7DoSYBqASUSntlQMajIHXTZ+UmerzYUAgBAIHy+fwegLeVFodAhZChAJebxBYIAbtQYGwJAAWaGothw+hYnH4-Z0OjwRQweCoGAQZAg0LwHD4YhyYTcIgAcTYAB9hOE6MSQGQBQxRSAKLyBSKxRLuGwpcSxLzhAKxKqKGIJQKiELVTKJcaKKbpbqBdwFbqyJqxBFRbq5QKgA&format=noten&ssp=10&name=Valse_à_5_temps&play=1"},{"Name":"Valse à 5 temps (et contrechants)","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFxsATADYiAFWEA1CDAIg2AA7YBWNixABbVATYAKEOwrMWGEFQisCASiIAleYuWbteg0QDCw6RgQdAA0bACCGIFgZHrg7AAKEJbYFHhsAELUAK4MDBD0RAAi-hjY1GyJyakZ2bn5dGyAyARsTtBJmNgqALRsALLUdIoVcLgAViBZTX3xAFI83HwAzPy9ohoA9AAcRAAyotxbRACKwotbALyb-ADSwj4k0BSjBPAE2WCMFmwMMFnYdCRgL0AJKFYFsVAYahkQK6Nj8UggsFsKAQAgESHQ+GApHgqi0OiYsjYxGg8Go9EAN2oMDYEgALDiyWx8fRqbSGQ86HR4IoYPBUDAIMhUal4Dh8MQ5MJuEQAOJsAA+wnSDQoIDIioYDWscsVqpZGsV3G+arEcuEirE2pZYk1iqIypt1k1zoorp1FDExoNXrIlrEGTNeod0rE8qVKrNIHWZHWWro6wY6zYuv16zl63S60Ths1JptXotVsLYhAiodyro6Vt5ertcV9Yoix9ga9IAD6TbLdDpyIAC9lf2NIrh6OR9xhwGx5XhGF1hQcwuU9ZvfPF4nF6mvYr10ut6vjUGWYtO2qe0A&format=noten&ssp=10&name=Valse_à_5_temps_(et_contrechants)&play=1"},{"Name":"VALSES - Suite Sangshyttevalsen + Far Away","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFzciAFWEcAagEEAMgGUAoorYBaNooCu2FiC0QwZAihb6AbhBgFwbANRsAYhAxtZAdwjIiAaWGyQA&format=noten&ssp=10&name=VALSES_-_Suite_Sangshyttevalsen_+_Far_Away&play=1"},{"Name":"Sangshyttevalsen","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFxsATADYiAFWEBlCGDIEULFiABuEGAXBEASsIBq23UQDCwgELI2AUS1sFIFokwAaNgFkILAvboAS7AZYQAZCDYTHRA2ABFYuQBTpRVkNU9k1NUWRUyU5RzNU3AAOiIvUQBmAHoAFiIw0W4agA4iAEVhFrqAXm4xfgBpUSsAW1wSaAoAKwJ4AmoAVzBGZnYGGCXsOhJgLwBJOIO2VAxqMgwIMbZ+UkPjtigIAgIzi9u9h5OqWjp3sife5HE7PV4aagwNgSBrAx6-egQqEwqZ0OjwbQweCoGAQZDPCh4eA4fDEIzdIgMMgAH2EDCqbCsbCp1JAdTYIDo1Io7KsAEFqQAxdkstiUhmRMgMVnszncugchhsOgUancRkisjCaliDUUXUAXTY1OpRFpdEFbEFCut3Ls9goDup-IA4ky+S7jVa7HE7IKBWKLVabVyKPa7I6Vc6+YyFRQBVZdVY6tqxcAjAApczmeDksQkTPZ+AALzEtIAHhIvZXq1XqWwa-WC1mc8W6w3242a6nG6b0y34LS27WR-XG2nC63O9OR9qgA&format=noten&ssp=10&name=Sangshyttevalsen&play=1"},{"Name":"Far Away","URL":"https://michaeleskin.com/abctools/abctools.html?lzw=KQUwdghgRgNiD6ALAngBxAJxgSzAawGcAoYYAcwGNEB7DAEwDNqwAXAAgCo2BGABiKIANAFxsATAHYiAFWEAxCBjYBBAO4RkRAErCAahBgEQJAELCAygFdsLEG3MQwZAiha2AbgaNg2AajYKSmoa4gD0YkQAwsIACiC2bABSlk4ywtKIdpGOEHTYjgA0bBl2gRDqyEUA0hAsiHDgAOQERQAyIBAozW0dXQT28WwAIo4UIEVpALKK2CDdbACqqMPUqj7KYHQqGNQpdEUA6l52AAds0xizh9gwW8oEqIoQZJbEk6IAzKEALEStotxQgAOIgARWEgO+AF5uN9+FVRCYALa4EjQCgAKwI8AIu02TFYbAYMGsdBIwEmAEkhpS2KgdmQMBAkWx+KQqTS2FAIAQHgzWeSObSqLQ6PTqGQBezqbTubz3NQYGwAGy-aWckX0BVK1Vouh0eAGGDwVAwDTcih4eA4fDEXQQohyZQAH2EJjEbBMyk9dGdFG9cg9Tud7s93pMID93zoFGdAB0iKGvT6-SYVB66JGGHYY2HndxPR7k07hM6i0WKGxM87nURXQwPdmiRBnSBK8oM1mxE2GC2QNHIwmGHQ022XSOAOJVkwT52Bwt5gsLkyVzOlosfFQBF3OtgkXSJSKReD2iLAA9H+AALzEroAHsq2LuH0+2C-n4-d-vD8er5+3-+74AWwpbATWe7nj+8Cun+r5AfB-7fpesEfnBgGPqB75fsAiBuKgBDCKEoSqCRAB0yC7CwlhQCApEUNQSLEbUVAAPzuFCACc2BiFoEDKAwACOAlwkAA&format=noten&ssp=10&name=Far_Away&play=1"}];
+
+    // Set this to false to disable state persistence
+    var gAllowStatePersistence = true;
+
+    // Set this to false to hide previous and next tune buttons
+    var gAllowPreviousNextButtons = true;
+
+    var LZString=function(){function o(o,r){if(!t[o]){t[o]={};for(var n=0;n<o.length;n++)t[o][o.charAt(n)]=n}return t[o][r]}var r=String.fromCharCode,n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",t={},i={compressToBase64:function(o){if(null==o)return"";var r=i._compress(o,6,function(o){return n.charAt(o)});switch(r.length%4){default:case 0:return r;case 1:return r+"===";case 2:return r+"==";case 3:return r+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(e){return o(n,r.charAt(e))})},compressToUTF16:function(o){return null==o?"":i._compress(o,15,function(o){return r(o+32)})+" "},decompressFromUTF16:function(o){return null==o?"":""==o?null:i._decompress(o.length,16384,function(r){return o.charCodeAt(r)-32})},compressToUint8Array:function(o){for(var r=i.compress(o),n=new Uint8Array(2*r.length),e=0,t=r.length;t>e;e++){var s=r.charCodeAt(e);n[2*e]=s>>>8,n[2*e+1]=s%256}return n},decompressFromUint8Array:function(o){if(null===o||void 0===o)return i.decompress(o);for(var n=new Array(o.length/2),e=0,t=n.length;t>e;e++)n[e]=256*o[2*e]+o[2*e+1];var s=[];return n.forEach(function(o){s.push(r(o))}),i.decompress(s.join(""))},compressToEncodedURIComponent:function(o){return null==o?"":i._compress(o,6,function(o){return e.charAt(o)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(n){return o(e,r.charAt(n))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},_compress:function(o,r,n){if(null==o)return"";var e,t,i,s={},p={},u="",c="",a="",l=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<o.length;i+=1)if(u=o.charAt(i),Object.prototype.hasOwnProperty.call(s,u)||(s[u]=f++,p[u]=!0),c=a+u,Object.prototype.hasOwnProperty.call(s,c))a=c;else{if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++),s[c]=f++,a=String(u)}if(""!==a){if(Object.prototype.hasOwnProperty.call(p,a)){if(a.charCodeAt(0)<256){for(e=0;h>e;e++)m<<=1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=a.charCodeAt(0),e=0;8>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;h>e;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=a.charCodeAt(0),e=0;16>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}l--,0==l&&(l=Math.pow(2,h),h++),delete p[a]}else for(t=s[a],e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;l--,0==l&&(l=Math.pow(2,h),h++)}for(t=2,e=0;h>e;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m<<=1,v==r-1){d.push(n(m));break}v++}return d.join("")},decompress:function(o){return null==o?"":""==o?null:i._decompress(o.length,32768,function(r){return o.charCodeAt(r)})},_decompress:function(o,n,e){var t,i,s,p,u,c,a,l,f=[],h=4,d=4,m=3,v="",w=[],A={val:e(0),position:n,index:1};for(i=0;3>i;i+=1)f[i]=i;for(p=0,c=Math.pow(2,2),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(t=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;l=r(p);break;case 2:return""}for(f[3]=l,s=l,w.push(l);;){if(A.index>o)return"";for(p=0,c=Math.pow(2,m),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;switch(l=p){case 0:for(p=0,c=Math.pow(2,8),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 1:for(p=0,c=Math.pow(2,16),a=1;a!=c;)u=A.val&A.position,A.position>>=1,0==A.position&&(A.position=n,A.val=e(A.index++)),p|=(u>0?1:0)*a,a<<=1;f[d++]=r(p),l=d-1,h--;break;case 2:return w.join("")}if(0==h&&(h=Math.pow(2,m),m++),f[l])v=f[l];else{if(l!==d)return null;v=s+s.charAt(0)}w.push(v),f[d++]=s+v.charAt(0),h--,s=v,0==h&&(h=Math.pow(2,m),m++)}}};return i}();"function"==typeof define&&define.amd?define(function(){return LZString}):"undefined"!=typeof module&&null!=module&&(module.exports=LZString);
+
+    // Set this to false to disable changing instruments when switching tablature
+    var gAllowInstrumentChanges = true;
+
+    var isBanjo = false;
+    var isFlute = false;
+    var isAccordion = false;
+    var isConcertina = false;
+    var isDulcimer = false;
+
+    var lastURL = "";
+
+    // Populate the selector with options from JSON
+    document.addEventListener('DOMContentLoaded', () => {
+
+        document.getElementById('fullscreenbutton').addEventListener('click', function() {
+            if (lastURL != ""){
+             window.open(lastURL, '_blank');
+            }
+        });
+
+        const tuneSelector = document.getElementById('tuneSelector');
+
+        const tuneFrame = document.getElementById('tuneFrame');
+
+        if (tunes.length > 1){
+
+           tunes.forEach(tune => {
+               const option = document.createElement('option');
+               option.value = tune.URL;
+               option.textContent = tune.Name;
+               tuneSelector.appendChild(option);
+           });
+
+           // Update iframe src when an option is selected
+           tuneSelector.addEventListener('change', () => {
+
+               var theURL = tuneSelector.value;
+
+               if (theURL == "")return;
+
+               theURL = theURL.replace(/&format=([^&]+)/g,"&format="+tabStyle);
+
+               if (gAllowInstrumentChanges){
+                  theURL = injectInstrument(theURL);
+               }
+
+               tuneFrame.src = theURL;
+               lastURL = theURL;
+
+               // Save last tune
+               if (gAllowStatePersistence){
+
+                   if (window.localStorage){
+
+                       localStorage.lastTuneName_QYVYNEM = tuneSelector.options[tuneSelector.selectedIndex].text;
+
+                       var theLastTuneTab = document.getElementById('displayOptions').value;
+                       localStorage.lastTab_QYVYNEM = theLastTuneTab;
+
+                   }
+
+               }
+
+           });
+
+          if (gAllowPreviousNextButtons){
+
+               document.getElementById('next_tune').addEventListener('click', nextTune);
+
+               document.getElementById('previous_tune').addEventListener('click', previousTune);
+
+               function nextTune(){ 
+                   var tuneIndex = tuneSelector.selectedIndex;
+                   tuneIndex++;
+                   if (tuneIndex > tunes.length){
+                    tuneIndex = tunes.length;
+                   }
+                   tuneSelector.selectedIndex = tuneIndex;
+                   tuneSelector.dispatchEvent(new Event('change'));
+               }
+
+               function previousTune(){
+                   var tuneIndex = tuneSelector.selectedIndex;
+                   tuneIndex--;
+                   if (tuneIndex < 0){
+                       tuneIndex = 0;
+                   }
+                   tuneSelector.selectedIndex = tuneIndex;
+                   tuneSelector.dispatchEvent(new Event('change'));
+               }
+          }
+          else{
+               document.getElementById('next_tune').style.display="none";
+               document.getElementById('previous_tune').style.display="none";
+          }
+
+        }
+        else{
+
+           tuneSelector.style.display="none";
+
+           document.getElementById('next_tune').style.display="none";
+           document.getElementById('previous_tune').style.display="none";
+
+           setTimeout(function(){
+
+             var theURL = tunes[0].URL;
+
+             if (theURL == "")return;
+
+             theURL = theURL.replace(/&format=([^&]+)/g,"&format="+tabStyle);
+
+             if (gAllowInstrumentChanges){
+                 theURL = injectInstrument(theURL);
+             }
+
+             tuneFrame.src = theURL;
+             lastURL = theURL;
+
+           },250);
+        }
+
+        var tabStyle = "noten";
+
+        //
+        // Decompress the tune LZW, replace the instrument and volumes
+        //
+
+        function extractLZWParameter(url) {
+           // Use a regular expression to find the part starting with &lzw= followed by any characters until the next &
+            const match = url.match(/lzw=([^&]*)/);
+
+            // If a match is found, return the part after &lzw=
+            return match ? match[0] : null;
+        }
+
+        function injectInstrument(theURL){
+
+            var originalAbcInLZW = extractLZWParameter(theURL);
+
+            originalAbcInLZW = originalAbcInLZW.replace("lzw=","");
+
+            var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
+
+            switch (tabStyle){
+                case "mandolin":
+                    if (isBanjo){
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 105");
+                    }
+                    else{
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 141");
+                    }
+                    break;
+                case "gdad":
+                    abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 140");
+                    break;
+                case "guitare":
+                case "guitard":
+                    abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 24\n%%MIDI transpose -12");
+                    break;
+                case "whistle":
+                    if (isFlute){
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 73");
+                    }
+                    else{
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 78");
+                    }
+                    abcInLZW = abcInLZW.replace("%%MIDI bassvol 64","%%MIDI bassvol 64");
+                    abcInLZW = abcInLZW.replace("%%MIDI chordvol 64","%%MIDI chordvol 64");
+                    break;
+                case "noten":
+                    if (isAccordion){
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 21");
+                    }
+                    else
+                    if (isConcertina){
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 133");
+                    }
+                    else
+                    if (isDulcimer){
+                        abcInLZW = abcInLZW.replace("%%MIDI program 0","%%MIDI program 15");
+                    }
+                    else{
+                        return theURL;
+                    }
+                    break;
+            }
+
+            var newLZWparam = "lzw="+LZString.compressToEncodedURIComponent(abcInLZW);
+
+            originalAbcInLZW = "lzw="+originalAbcInLZW;
+
+            theURL = theURL.replace(originalAbcInLZW,newLZWparam);
+
+            return theURL;
+        }
+
+        const displayOptions = document.getElementById('displayOptions');
+
+          displayOptions.addEventListener('change', () => {
+
+             var origTabStyle = tabStyle;
+
+             if (displayOptions.value == "-1"){
+                 return;
+             }
+
+             isBanjo = false;
+             isFlute = false;
+             isAccordion = false;
+             isConcertina = false;
+             isDulcimer = false;
+
+             switch (displayOptions.value){
+                 case "0": // Standard notation
+                     tabStyle = "noten";
+                     break;
+                 case "1": // Note names
+                     tabStyle = "notenames";
+                     break;
+                 case "2": // Mandolin
+                     tabStyle = "mandolin";
+                     break;
+                 case "3": // Tenor banjo
+                     isBanjo = true;
+                     tabStyle = "mandolin";
+                     break;
+                 case "4": // GDAD
+                     tabStyle = "gdad";
+                     break;
+                 case "5": // Guitar
+                     tabStyle = "guitare";
+                     break;
+                 case "6": // DADGAD
+                     tabStyle = "guitard";
+                     break;
+                 case "7": // Whistle
+                     tabStyle = "whistle";
+                     break;
+                 case "8": // Irish flute
+                     isFlute = true;
+                     tabStyle = "whistle";
+                     break;
+                 case "9": // Accordion
+                     isAccordion = true;
+                     tabStyle = "noten";
+                     break;
+                 case "10": // Concertina
+                     isConcertina = true;
+                     tabStyle = "noten";
+                     break;
+                 case "11": // Hammered dulcimer
+                     isDulcimer = true;
+                     tabStyle = "noten";
+                     break;
+                 default:
+                     tabStyle = "noten";
+                     break;
+             }
+
+             var theURL;
+
+             if (tunes.length > 1){
+                theURL = tuneSelector.value;
+             }
+             else {
+                theURL = tunes[0].URL;
+             }
+
+             if (theURL == "")return;
+
+             theURL = theURL.replace(/&format=([^&]+)/g,"&format="+tabStyle);
+
+             if (gAllowInstrumentChanges){
+                 theURL = injectInstrument(theURL);
+             }
+
+             tuneFrame.src = theURL;
+             lastURL = theURL;
+
+             // Save last tune
+             if (gAllowStatePersistence){
+
+                 if (window.localStorage){
+
+                     if (tunes.length > 1){
+                         localStorage.lastTuneName_QYVYNEM = tuneSelector.options[tuneSelector.selectedIndex].text;
+                     }
+
+                     var theLastTuneTab = document.getElementById('displayOptions').value;
+                     localStorage.lastTab_QYVYNEM = theLastTuneTab;
+                 }
+
+             }
+
+        });
+
+       function getElementsTotalHeight() {
+
+           var ids;
+
+           if (tunes.length > 1){
+               if (gAllowPreviousNextButtons){
+                   ids = ['title', 'subtitle', 'previous_tune', 'footer1', 'footer2'];
+               }
+               else{
+                   ids = ['title', 'subtitle', 'tuneSelector', 'footer1', 'footer2'];
+               }
+           }
+           else{
+               ids = ['title', 'subtitle', 'displayOptions', 'footer1', 'footer2'];
+           }
+
+           let totalHeight = 0;
+
+           ids.forEach(id => {
+
+               const element = document.getElementById(id);
+
+               if (element && (element.textContent.trim() !== "")) {
+                   const elementHeight = element.offsetHeight;
+                   const computedStyle = window.getComputedStyle(element);
+
+                   // Include margins
+                   const marginTop = parseFloat(computedStyle.marginTop);
+                   const marginBottom = parseFloat(computedStyle.marginBottom);
+                   totalHeight += elementHeight + marginTop + marginBottom + 1;
+               }
+           });
+
+           if ((tunes.length == 1) && (!document.getElementById('displayOptions'))){
+               totalHeight += 24;
+           }
+           return totalHeight+10;
+       }
+
+       function resizeIframe() {
+           const iframe = document.getElementById('tuneFrame');
+           iframe.style.width = (window.innerWidth-3) + 'px';
+           var otherElementsHeight = getElementsTotalHeight();
+           iframe.style.height = (window.innerHeight-otherElementsHeight) + 'px';
+       }
+
+       function setSelectedTuneByName(optionText) {
+           var gotMatch = false;
+           for (let i = 0; i < tuneSelector.options.length; i++) {
+               if (tuneSelector.options[i].text === optionText) {
+                   tuneSelector.selectedIndex = i;
+                   gotMatch = true;
+                   break;
+               }
+           }
+           if (gotMatch){
+               tuneSelector.dispatchEvent(new Event('change'));
+           }
+       }
+
+       // Resize the iframe on window resize
+       window.addEventListener('resize', resizeIframe);
+
+       // Initial call to ensure it fits when the page loads
+       resizeIframe();
+
+       // Restore state
+       if (gAllowStatePersistence){
+
+          if (window.localStorage){
+
+              setTimeout(function(){
+
+                var theLastTuneTab = localStorage.lastTab_QYVYNEM;
+                if (theLastTuneTab && (theLastTuneTab != "")){
+                    var elem = document.getElementById('displayOptions');
+                    elem.value = theLastTuneTab;
+                    elem.dispatchEvent(new Event('change'));
+                }
+
+                if (tunes.length > 1){
+
+                   var theLastTuneName = localStorage.lastTuneName_QYVYNEM;
+                   if (theLastTuneName && (theLastTuneName != "")){
+                       setSelectedTuneByName(theLastTuneName);
+                   }
+
+                }
+
+             },250);
+          }
+       }
+    });
+
+</script>
+
+</body>
+
+</html>
