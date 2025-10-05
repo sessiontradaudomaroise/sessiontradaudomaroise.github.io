@@ -245,10 +245,10 @@
 
                    if (window.localStorage){
 
-                       localStorage.lastTuneName_QYVYNEM = tuneSelector.options[tuneSelector.selectedIndex].text;
+                       localStorage.lastTuneName_TSWRXVD = tuneSelector.options[tuneSelector.selectedIndex].text;
 
                        var theLastTuneTab = document.getElementById('displayOptions').value;
-                       localStorage.lastTab_QYVYNEM = theLastTuneTab;
+                       localStorage.lastTab_TSWRXVD = theLastTuneTab;
 
                    }
 
@@ -477,11 +477,11 @@
                  if (window.localStorage){
 
                      if (tunes.length > 1){
-                         localStorage.lastTuneName_QYVYNEM = tuneSelector.options[tuneSelector.selectedIndex].text;
+                         localStorage.lastTuneName_TSWRXVD = tuneSelector.options[tuneSelector.selectedIndex].text;
                      }
 
                      var theLastTuneTab = document.getElementById('displayOptions').value;
-                     localStorage.lastTab_QYVYNEM = theLastTuneTab;
+                     localStorage.lastTab_TSWRXVD = theLastTuneTab;
                  }
 
              }
@@ -561,7 +561,7 @@
 
               setTimeout(function(){
 
-                var theLastTuneTab = localStorage.lastTab_QYVYNEM;
+                var theLastTuneTab = localStorage.lastTab_TSWRXVD;
                 if (theLastTuneTab && (theLastTuneTab != "")){
                     var elem = document.getElementById('displayOptions');
                     elem.value = theLastTuneTab;
@@ -570,7 +570,7 @@
 
                 if (tunes.length > 1){
 
-                   var theLastTuneName = localStorage.lastTuneName_QYVYNEM;
+                   var theLastTuneName = localStorage.lastTuneName_TSWRXVD;
                    if (theLastTuneName && (theLastTuneName != "")){
                        setSelectedTuneByName(theLastTuneName);
                    }
