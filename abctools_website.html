@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Partitions HTML</title>
 
-  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=1782765840499">
+  <link rel="stylesheet" href="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-audio.css?cb=1782940598250">
 
   <style>
     /*
@@ -55,10 +55,10 @@
       margin:0;
       /*
         Font size customization: website title at the top of the exported website.
-        To make it smaller or larger, change the last clamp() value, 3.0rem.
+        To make it smaller or larger, change the last clamp() value, 2.6rem.
         The first value is the minimum size; the middle value controls responsive scaling.
       */
-      font-size:clamp(1.8rem,4.2vw,3.0rem);
+      font-size:clamp(1.8rem,4.2vw,2.6rem);
       line-height:1.08;
     }
     /*
@@ -372,7 +372,8 @@
       max-width:280px;
       min-height:38px;
       padding:7px 42px 7px 12px;
-      color:var(--ink);
+      color:var(--ink) !important;
+      -webkit-text-fill-color:var(--ink) !important;
       background-color:color-mix(in srgb,var(--panel) 88%,white);
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2317241c' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
       background-repeat:no-repeat;
@@ -384,6 +385,11 @@
       cursor:pointer;
       font:inherit;
       line-height:1.2;
+    }
+    .instrument-selector option {
+      color:var(--ink);
+      -webkit-text-fill-color:var(--ink);
+      background:var(--panel);
     }
     .instrument-selector::-ms-expand {
       display:none;
@@ -457,6 +463,178 @@
     .abcjs-inline-audio .abcjs-midi-tempo { color:#000 !important; }
     .abcjs-inline-audio .abcjs-midi-progress-background {
       background-color:#408a68 !important;
+    }
+    .tempo-entry-overlay {
+      position:fixed;
+      inset:0;
+      z-index:11000;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:25vh 14px 14px;
+      background:rgba(0,0,0,.24);
+    }
+    .tempo-entry-overlay[hidden] {
+      display:none;
+    }
+    .tempo-entry-overlay {
+      cursor:default;
+    }
+    .tempo-entry-dialog {
+      width:min(430px, calc(100vw - 28px));
+      padding:20px 18px 18px;
+      color:var(--ink);
+      background:#fff;
+      background-color:#fff;
+      background-image:none;
+      border:1px solid color-mix(in srgb,var(--line) 78%,white);
+      border-radius:calc(var(--radius) * .65);
+      box-shadow:0 10px 30px rgba(0,0,0,.24);
+      font:16px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    .tempo-entry-dialog h2 {
+      margin:0 0 22px;
+      color:var(--ink);
+      font-size:1.22rem;
+      line-height:1.15;
+      text-align:center;
+    }
+    .tempo-entry-field-row {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin:0 auto;
+    }
+    .tempo-entry-field-row label {
+      flex:0 0 auto;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .tempo-entry-field-row input {
+      flex:0 0 88px;
+      width:88px;
+      min-height:40px;
+      padding:6px 8px;
+      color:var(--ink);
+      background:#fff;
+      border:1px solid color-mix(in srgb,var(--line) 84%,white);
+      border-radius:calc(var(--radius) / 2);
+      font:inherit;
+      font-size:1.08rem;
+      text-align:center;
+    }
+    .tempo-entry-preset {
+      -webkit-appearance:none;
+      appearance:none;
+      flex:0 0 124px;
+      width:124px;
+      height:40px;
+      min-height:40px;
+      padding:6px 34px 6px 12px;
+      color:var(--ink);
+      -webkit-text-fill-color:var(--ink);
+      background-color:color-mix(in srgb,var(--panel, #fff) 92%,white);
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+        linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 17px,
+        calc(100% - 12px) 17px;
+      background-size:6px 6px, 6px 6px;
+      background-repeat:no-repeat;
+      border:1px solid color-mix(in srgb,var(--line) 84%,white);
+      border-radius:calc(var(--radius) / 2);
+      box-sizing:border-box;
+      font:inherit;
+      font-size:.98rem;
+      font-weight:750;
+      line-height:1.2;
+      cursor:pointer;
+    }
+    .tempo-entry-field-row input:focus,
+    .tempo-entry-preset:focus {
+      outline:2px solid color-mix(in srgb,var(--primary) 22%,transparent);
+      outline-offset:1px;
+    }
+    .tempo-entry-error {
+      min-height:1.25em;
+      margin:8px 0 0;
+      color:#a00000;
+      font-size:.88rem;
+      font-weight:800;
+      text-align:center;
+    }
+    .tempo-entry-actions {
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:6px;
+    }
+    .tempo-entry-actions button {
+      appearance:none;
+      min-width:96px;
+      min-height:40px;
+      padding:7px 14px;
+      border-radius:calc(var(--radius) / 2);
+      border:1px solid color-mix(in srgb,var(--line) 88%,white);
+      font:inherit;
+      font-weight:850;
+      cursor:pointer;
+    }
+    .tempo-entry-apply {
+      color:#ffffff;
+      background:var(--primary);
+      border-color:color-mix(in srgb,var(--accent) 55%,var(--primary));
+    }
+    .tempo-entry-cancel {
+      color:var(--ink);
+      background:#fff;
+      background-color:#fff;
+      background-image:none;
+    }
+    .tempo-entry-actions button:hover,
+    .tempo-entry-actions button:focus-visible {
+      outline:2px solid color-mix(in srgb,var(--primary) 24%,transparent);
+      outline-offset:2px;
+    }
+    @media (max-width: 420px) {
+      .tempo-entry-field-row {
+        gap:8px;
+      }
+      .tempo-entry-field-row label {
+        font-size:.95rem;
+      }
+      .tempo-entry-field-row input {
+        flex-basis:82px;
+        width:82px;
+      }
+      .tempo-entry-preset {
+        flex-basis:112px;
+        width:112px;
+        padding-left:10px;
+        padding-right:30px;
+        background-position:
+          calc(100% - 17px) 17px,
+          calc(100% - 11px) 17px;
+      }
+    }
+    @media (max-width: 340px) {
+      .tempo-entry-field-row {
+        max-width:250px;
+      }
+      .tempo-entry-preset {
+        flex-basis:124px;
+        width:124px;
+      }
+    }
+    .abcjs-inline-audio input.abcjs-midi-tempo[data-tempo-dialog-installed="true"],
+    .abcjs-inline-audio input.abcjs-midi-current-tempo[data-tempo-dialog-installed="true"],
+    .abcjs-inline-audio .abcjs-midi-current-tempo input[data-tempo-dialog-installed="true"],
+    .abcjs-inline-audio .abcjs-midi-current-tempo-wrapper input[data-tempo-dialog-installed="true"],
+    .abcjs-inline-audio .abcjs-tempo-wrapper input[data-tempo-dialog-installed="true"] {
+      cursor:pointer;
     }
     /*
       Mobile card spacing customization: these rules make tune cards and header
@@ -536,6 +714,17 @@
         text-align:center;
       }
     }
+    .tempo-entry-dialog {
+      background:#fff !important;
+      background-color:#fff !important;
+      background-image:none !important;
+      backdrop-filter:none !important;
+    }
+    .tempo-entry-cancel {
+      background:#fff !important;
+      background-color:#fff !important;
+      background-image:none !important;
+    }
     /*
       Print CSS customization: these rules apply only when the exported website is
       printed or saved as PDF from the browser. They remove interactive controls and
@@ -555,6 +744,35 @@
       .score-panel { break-inside:avoid; page-break-inside:avoid; }
     }
     
+
+    /*
+      Play bar repeat button highlight customization: these values are generated
+      from the selected website theme so the repeat/loop ON state remains clear
+      on Safari and other browsers without using an overly strong highlight.
+      The background shorthand needs !important because the shared abcjs audio CSS
+      sets .abcjs-btn background:none !important.
+    */
+    .abcjs-inline-audio {
+      --abcjs-repeat-active-bg:#0f4a2f;
+      --abcjs-repeat-active-fg:#80b58b;
+      --abcjs-repeat-active-ring:#97c2a0;
+    }
+    .abcjs-inline-audio button.abcjs-midi-loop.abcjs-btn.abcjs-pushed,
+    .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed {
+      background:var(--abcjs-repeat-active-bg) !important;
+      border-color:var(--abcjs-repeat-active-fg) !important;
+      box-shadow:
+        inset 0 0 0 2px rgba(0,0,0,.38),
+        0 0 0 1px var(--abcjs-repeat-active-ring) !important;
+      box-sizing:border-box;
+    }
+    .abcjs-inline-audio button.abcjs-midi-loop.abcjs-btn.abcjs-pushed g,
+    .abcjs-inline-audio button.abcjs-midi-loop.abcjs-btn.abcjs-pushed path,
+    .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed g,
+    .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed path {
+      fill:var(--abcjs-repeat-active-fg) !important;
+      stroke:var(--abcjs-repeat-active-fg) !important;
+    }
     @font-face { font-family: 'TinWhistleFingering'; src: url(data:font/ttf;base64,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) format('truetype'); font-weight: normal; font-style: normal; }
     .whistle { font-family:'TinWhistleFingering'; font-size:50px; }
     .whistle_small { font-family:'TinWhistleFingering'; font-size:32px; }
@@ -777,58 +995,59 @@
       
     </div>
     <div class="toc-links">
-        <a href="#tune-airs" data-toc-entry="true" data-group="group-1" data-toc-title="AIRS" class="section-header-toc-link">AIRS</a>
-        <a href="#tune-down-by-the-sally-gardens" data-toc-entry="true" data-group="group-1" data-toc-title="Down by the Sally Gardens"><span>1</span>Down by the Sally Gardens</a>
-        <a href="#tune-jan-de-mulder" data-toc-entry="true" data-group="group-1" data-toc-title="Jan de Mulder"><span>2</span>Jan de Mulder</a>
-        <a href="#tune-bourrees-2-temps" data-toc-entry="true" data-group="group-1" data-toc-title="BOURRÉES 2 TEMPS" class="section-header-toc-link">BOURRÉES 2 TEMPS</a>
-        <a href="#tune-je-mene-les-loups" data-toc-entry="true" data-group="group-1" data-toc-title="Je mène les loups"><span>3</span>Je mène les loups</a>
-        <a href="#tune-bourrees-3-temps-suite-grandes-poteries-reuilly" data-toc-entry="true" data-group="group-1" data-toc-title="BOURRÉES 3 TEMPS - Suite Grandes Poteries + Reuilly" class="section-header-toc-link">BOURRÉES 3 TEMPS - Suite Grandes Poteries + Reuilly</a>
-        <a href="#tune-bourree-des-grandes-poteries" data-toc-entry="true" data-group="group-1" data-toc-title="Bourree des grandes poteries"><span>4</span>Bourree des grandes poteries</a>
-        <a href="#tune-bourree-piquee-de-reuilly" data-toc-entry="true" data-group="group-1" data-toc-title="Bourrée piquée de Reuilly"><span>5</span>Bourrée piquée de Reuilly</a>
-        <a href="#tune-choregraphies" data-toc-entry="true" data-group="group-1" data-toc-title="CHORÉGRAPHIES" class="section-header-toc-link">CHORÉGRAPHIES</a>
-        <a href="#tune-de-jagt" data-toc-entry="true" data-group="group-1" data-toc-title="De Jagt"><span>6</span>De Jagt</a>
-        <a href="#tune-chant-horlepiep-suite-carillon-esquelbecq-zoete-mariton-et-h" data-toc-entry="true" data-group="group-1" data-toc-title="CHANT-HORLEPIEP - suite Carillon Esquelbecq, Zoete Mariton et Horlepiep" class="section-header-toc-link">CHANT-HORLEPIEP - suite Carillon Esquelbecq, Zoete Mariton et Horlepiep</a>
-        <a href="#tune-le-carillon-d-esquelbecq" data-toc-entry="true" data-group="group-1" data-toc-title="Le Carillon d&#039;Esquelbecq"><span>7</span>Le Carillon d&#039;Esquelbecq</a>
-        <a href="#tune-zoete-mariton-edc-84" data-toc-entry="true" data-group="group-1" data-toc-title="Zoete Mariton EDC.84"><span>8</span>Zoete Mariton EDC.84</a>
-        <a href="#tune-zoete-mariton-edc-84-et-contrechant" data-toc-entry="true" data-group="group-1" data-toc-title="Zoete Mariton EDC.84 (et contrechant)"><span>9</span>Zoete Mariton EDC.84 (et contrechant)</a>
-        <a href="#tune-horlepiep" data-toc-entry="true" data-group="group-1" data-toc-title="Horlepiep"><span>10</span>Horlepiep</a>
-        <a href="#tune-jigs" data-toc-entry="true" data-group="group-1" data-toc-title="JIGS" class="section-header-toc-link">JIGS</a>
-        <a href="#tune-morrison-s-jig" data-toc-entry="true" data-group="group-1" data-toc-title="Morrison&#039;s Jig"><span>11</span>Morrison&#039;s Jig</a>
-        <a href="#tune-billey-keirn" data-toc-entry="true" data-group="group-1" data-toc-title="Billey Keirn"><span>12</span>Billey Keirn</a>
-        <a href="#tune-droneless" data-toc-entry="true" data-group="group-1" data-toc-title="Droneless"><span>13</span>Droneless</a>
-        <a href="#tune-les-bonnes-gens-ajd-269" data-toc-entry="true" data-group="group-1" data-toc-title="Les Bonnes Gens AJD.269"><span>14</span>Les Bonnes Gens AJD.269</a>
-        <a href="#tune-slip-jigs-suite-butterfly-fisherman-s" data-toc-entry="true" data-group="group-1" data-toc-title="SLIP JIGS - Suite Butterfly + Fisherman&#039;s" class="section-header-toc-link">SLIP JIGS - Suite Butterfly + Fisherman&#039;s</a>
-        <a href="#tune-the-butterfly" data-toc-entry="true" data-group="group-1" data-toc-title="the Butterfly"><span>15</span>the Butterfly</a>
-        <a href="#tune-the-fisherman-s" data-toc-entry="true" data-group="group-1" data-toc-title="The Fisherman&#039;s"><span>16</span>The Fisherman&#039;s</a>
-        <a href="#tune-matelotes" data-toc-entry="true" data-group="group-1" data-toc-title="MATELOTES" class="section-header-toc-link">MATELOTES</a>
-        <a href="#tune-maclote-d-habiemont-matelote-de-wandembrile" data-toc-entry="true" data-group="group-1" data-toc-title="Maclote d&#039;Habiémont - (Matelote de Wandembrile ?)"><span>17</span>Maclote d&#039;Habiémont - (Matelote de Wandembrile ?)</a>
-        <a href="#tune-mazurkas-suite-saint-genest-sol-m-limoise" data-toc-entry="true" data-group="group-1" data-toc-title="MAZURKAS - Suite Saint Genest (Sol m) + Limoise" class="section-header-toc-link">MAZURKAS - Suite Saint Genest (Sol m) + Limoise</a>
-        <a href="#tune-les-ecoliers-de-st-genest-sol-m" data-toc-entry="true" data-group="group-1" data-toc-title="Les écoliers de St Genest (Sol m)"><span>18</span>Les écoliers de St Genest (Sol m)</a>
-        <a href="#tune-l-inconnu-de-limoise" data-toc-entry="true" data-group="group-1" data-toc-title="L&#039;Inconnu de Limoise"><span>19</span>L&#039;Inconnu de Limoise</a>
-        <a href="#tune-menuet-contredanse-suite-de-gruijtters-70-et-39" data-toc-entry="true" data-group="group-1" data-toc-title="MENUET-CONTREDANSE suite De Gruijtters 70 et 39" class="section-header-toc-link">MENUET-CONTREDANSE suite De Gruijtters 70 et 39</a>
-        <a href="#tune-menuet-jdg-70" data-toc-entry="true" data-group="group-1" data-toc-title="Menuet JDG.70"><span>20</span>Menuet JDG.70</a>
-        <a href="#tune-menuet-jdg-70-et-contrechant" data-toc-entry="true" data-group="group-1" data-toc-title="Menuet JDG.70 (et contrechant)"><span>21</span>Menuet JDG.70 (et contrechant)</a>
-        <a href="#tune-contredanse-jdg-39" data-toc-entry="true" data-group="group-1" data-toc-title="Contredanse JDG.39"><span>22</span>Contredanse JDG.39</a>
-        <a href="#tune-contredanse-jdg-39-et-contrechant" data-toc-entry="true" data-group="group-1" data-toc-title="Contredanse JDG.39 (et contrechant)"><span>23</span>Contredanse JDG.39 (et contrechant)</a>
-        <a href="#tune-scottishs" data-toc-entry="true" data-group="group-1" data-toc-title="SCOTTISHS" class="section-header-toc-link">SCOTTISHS</a>
-        <a href="#tune-adele-blanc-sec" data-toc-entry="true" data-group="group-1" data-toc-title="Adèle blanc-sec"><span>24</span>Adèle blanc-sec</a>
-        <a href="#tune-la-saint-julien" data-toc-entry="true" data-group="group-1" data-toc-title="La Saint Julien"><span>25</span>La Saint Julien</a>
-        <a href="#tune-plante-un-chou-fraternelle-des-cornemuses" data-toc-entry="true" data-group="group-1" data-toc-title="Plante un chou - Fraternelle des cornemuses"><span>26</span>Plante un chou - Fraternelle des cornemuses</a>
-        <a href="#tune-scottish-suite-en-flandre-et-canal-en-octobre" data-toc-entry="true" data-group="group-1" data-toc-title="SCOTTISH - Suite En Flandre et Canal en Octobre" class="section-header-toc-link">SCOTTISH - Suite En Flandre et Canal en Octobre</a>
-        <a href="#tune-retour-de-flandre" data-toc-entry="true" data-group="group-1" data-toc-title="Retour de Flandre"><span>27</span>Retour de Flandre</a>
-        <a href="#tune-le-canal-en-octobre" data-toc-entry="true" data-group="group-1" data-toc-title="Le Canal en Octobre"><span>28</span>Le Canal en Octobre</a>
-        <a href="#tune-valses" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES" class="section-header-toc-link">VALSES</a>
-        <a href="#tune-flatworld" data-toc-entry="true" data-group="group-1" data-toc-title="Flatworld"><span>29</span>Flatworld</a>
-        <a href="#tune-valses-suite-sangshyttevalsen-far-away" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES - Suite Sangshyttevalsen + Far Away" class="section-header-toc-link">VALSES - Suite Sangshyttevalsen + Far Away</a>
-        <a href="#tune-sangshyttevalsen" data-toc-entry="true" data-group="group-1" data-toc-title="Sangshyttevalsen"><span>30</span>Sangshyttevalsen</a>
-        <a href="#tune-far-away" data-toc-entry="true" data-group="group-1" data-toc-title="Far Away"><span>31</span>Far Away</a>
-        <a href="#tune-valses-suite-ailes-du-moulin-et-boulogne" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES - Suite Ailes du Moulin et Boulogne" class="section-header-toc-link">VALSES - Suite Ailes du Moulin et Boulogne</a>
-        <a href="#tune-les-ailes-du-moulin" data-toc-entry="true" data-group="group-1" data-toc-title="Les Ailes du Moulin"><span>32</span>Les Ailes du Moulin</a>
-        <a href="#tune-boulogne" data-toc-entry="true" data-group="group-1" data-toc-title="Boulogne"><span>33</span>Boulogne</a>
-        <a href="#tune-valses-a-5-temps" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES A 5 TEMPS" class="section-header-toc-link">VALSES A 5 TEMPS</a>
-        <a href="#tune-valse-a-5-temps" data-toc-entry="true" data-group="group-1" data-toc-title="Valse à 5 temps"><span>34</span>Valse à 5 temps</a>
-        <a href="#tune-valse-a-5-temps-et-contrechants" data-toc-entry="true" data-group="group-1" data-toc-title="Valse à 5 temps (et contrechants)"><span>35</span>Valse à 5 temps (et contrechants)</a>
-        <a href="#tune-historique-des-modifications" data-toc-entry="true" data-group="group-1" data-toc-title="Historique des modifications" class="section-header-toc-link">Historique des modifications</a>
+        <a href="#tune-airs" data-toc-entry="true" data-group="group-1" data-toc-title="AIRS" data-section-header="true" class="section-header-toc-link">AIRS</a>
+        <a href="#tune-down-by-the-sally-gardens" data-toc-entry="true" data-group="group-1" data-toc-title="Down by the Sally Gardens" data-section-header="false"><span>1</span>Down by the Sally Gardens</a>
+        <a href="#tune-jan-de-mulder" data-toc-entry="true" data-group="group-1" data-toc-title="Jan de Mulder" data-section-header="false"><span>2</span>Jan de Mulder</a>
+        <a href="#tune-bourrees-2-temps" data-toc-entry="true" data-group="group-1" data-toc-title="BOURRÉES 2 TEMPS" data-section-header="true" class="section-header-toc-link">BOURRÉES 2 TEMPS</a>
+        <a href="#tune-je-mene-les-loups" data-toc-entry="true" data-group="group-1" data-toc-title="Je mène les loups" data-section-header="false"><span>3</span>Je mène les loups</a>
+        <a href="#tune-bourrees-3-temps-suite-grandes-poteries-reuilly" data-toc-entry="true" data-group="group-1" data-toc-title="BOURRÉES 3 TEMPS - Suite Grandes Poteries + Reuilly" data-section-header="true" class="section-header-toc-link">BOURRÉES 3 TEMPS - Suite Grandes Poteries + Reuilly</a>
+        <a href="#tune-bourree-des-grandes-poteries" data-toc-entry="true" data-group="group-1" data-toc-title="Bourree des grandes poteries" data-section-header="false"><span>4</span>Bourree des grandes poteries</a>
+        <a href="#tune-bourree-piquee-de-reuilly" data-toc-entry="true" data-group="group-1" data-toc-title="Bourrée piquée de Reuilly" data-section-header="false"><span>5</span>Bourrée piquée de Reuilly</a>
+        <a href="#tune-choregraphies" data-toc-entry="true" data-group="group-1" data-toc-title="CHORÉGRAPHIES" data-section-header="true" class="section-header-toc-link">CHORÉGRAPHIES</a>
+        <a href="#tune-de-jagt" data-toc-entry="true" data-group="group-1" data-toc-title="De Jagt" data-section-header="false"><span>6</span>De Jagt</a>
+        <a href="#tune-chant-horlepiep-suite-carillon-esquelbecq-zoete-mariton-et-h" data-toc-entry="true" data-group="group-1" data-toc-title="CHANT-HORLEPIEP - suite Carillon Esquelbecq, Zoete Mariton et Horlepiep" data-section-header="true" class="section-header-toc-link">CHANT-HORLEPIEP - suite Carillon Esquelbecq, Zoete Mariton et Horlepiep</a>
+        <a href="#tune-le-carillon-d-esquelbecq" data-toc-entry="true" data-group="group-1" data-toc-title="Le Carillon d&#039;Esquelbecq" data-section-header="false"><span>7</span>Le Carillon d&#039;Esquelbecq</a>
+        <a href="#tune-zoete-mariton-edc-84" data-toc-entry="true" data-group="group-1" data-toc-title="Zoete Mariton EDC.84" data-section-header="false"><span>8</span>Zoete Mariton EDC.84</a>
+        <a href="#tune-zoete-mariton-edc-84-et-contrechant" data-toc-entry="true" data-group="group-1" data-toc-title="Zoete Mariton EDC.84 (et contrechant)" data-section-header="false"><span>9</span>Zoete Mariton EDC.84 (et contrechant)</a>
+        <a href="#tune-horlepiep" data-toc-entry="true" data-group="group-1" data-toc-title="Horlepiep" data-section-header="false"><span>10</span>Horlepiep</a>
+        <a href="#tune-jigs" data-toc-entry="true" data-group="group-1" data-toc-title="JIGS" data-section-header="true" class="section-header-toc-link">JIGS</a>
+        <a href="#tune-morrison-s-jig" data-toc-entry="true" data-group="group-1" data-toc-title="Morrison&#039;s Jig" data-section-header="false"><span>11</span>Morrison&#039;s Jig</a>
+        <a href="#tune-billey-keirn" data-toc-entry="true" data-group="group-1" data-toc-title="Billey Keirn" data-section-header="false"><span>12</span>Billey Keirn</a>
+        <a href="#tune-droneless" data-toc-entry="true" data-group="group-1" data-toc-title="Droneless" data-section-header="false"><span>13</span>Droneless</a>
+        <a href="#tune-les-bonnes-gens-ajd-269" data-toc-entry="true" data-group="group-1" data-toc-title="Les Bonnes Gens AJD.269" data-section-header="false"><span>14</span>Les Bonnes Gens AJD.269</a>
+        <a href="#tune-slip-jigs-suite-butterfly-fisherman-s" data-toc-entry="true" data-group="group-1" data-toc-title="SLIP JIGS - Suite Butterfly + Fisherman&#039;s" data-section-header="true" class="section-header-toc-link">SLIP JIGS - Suite Butterfly + Fisherman&#039;s</a>
+        <a href="#tune-the-butterfly" data-toc-entry="true" data-group="group-1" data-toc-title="the Butterfly" data-section-header="false"><span>15</span>the Butterfly</a>
+        <a href="#tune-the-fisherman-s" data-toc-entry="true" data-group="group-1" data-toc-title="The Fisherman&#039;s" data-section-header="false"><span>16</span>The Fisherman&#039;s</a>
+        <a href="#tune-matelotes" data-toc-entry="true" data-group="group-1" data-toc-title="MATELOTES" data-section-header="true" class="section-header-toc-link">MATELOTES</a>
+        <a href="#tune-maclote-d-habiemont-matelote-de-wandembrile" data-toc-entry="true" data-group="group-1" data-toc-title="Maclote d&#039;Habiémont - (Matelote de Wandembrile ?)" data-section-header="false"><span>17</span>Maclote d&#039;Habiémont - (Matelote de Wandembrile ?)</a>
+        <a href="#tune-mazurkas-suite-saint-genest-sol-m-limoise" data-toc-entry="true" data-group="group-1" data-toc-title="MAZURKAS - Suite Saint Genest (Sol m) + Limoise" data-section-header="true" class="section-header-toc-link">MAZURKAS - Suite Saint Genest (Sol m) + Limoise</a>
+        <a href="#tune-les-ecoliers-de-st-genest-sol-m" data-toc-entry="true" data-group="group-1" data-toc-title="Les écoliers de St Genest (Sol m)" data-section-header="false"><span>18</span>Les écoliers de St Genest (Sol m)</a>
+        <a href="#tune-l-inconnu-de-limoise" data-toc-entry="true" data-group="group-1" data-toc-title="L&#039;Inconnu de Limoise" data-section-header="false"><span>19</span>L&#039;Inconnu de Limoise</a>
+        <a href="#tune-menuet-contredanse-suite-de-gruijtters-70-et-39" data-toc-entry="true" data-group="group-1" data-toc-title="MENUET-CONTREDANSE suite De Gruijtters 70 et 39" data-section-header="true" class="section-header-toc-link">MENUET-CONTREDANSE suite De Gruijtters 70 et 39</a>
+        <a href="#tune-menuet-jdg-70" data-toc-entry="true" data-group="group-1" data-toc-title="Menuet JDG.70" data-section-header="false"><span>20</span>Menuet JDG.70</a>
+        <a href="#tune-menuet-jdg-70-et-contrechant" data-toc-entry="true" data-group="group-1" data-toc-title="Menuet JDG.70 (et contrechant)" data-section-header="false"><span>21</span>Menuet JDG.70 (et contrechant)</a>
+        <a href="#tune-contredanse-jdg-39" data-toc-entry="true" data-group="group-1" data-toc-title="Contredanse JDG.39" data-section-header="false"><span>22</span>Contredanse JDG.39</a>
+        <a href="#tune-contredanse-jdg-39-et-contrechant" data-toc-entry="true" data-group="group-1" data-toc-title="Contredanse JDG.39 (et contrechant)" data-section-header="false"><span>23</span>Contredanse JDG.39 (et contrechant)</a>
+        <a href="#tune-scottishs" data-toc-entry="true" data-group="group-1" data-toc-title="SCOTTISHS" data-section-header="true" class="section-header-toc-link">SCOTTISHS</a>
+        <a href="#tune-adele-blanc-sec" data-toc-entry="true" data-group="group-1" data-toc-title="Adèle blanc-sec" data-section-header="false"><span>24</span>Adèle blanc-sec</a>
+        <a href="#tune-la-saint-julien" data-toc-entry="true" data-group="group-1" data-toc-title="La Saint Julien" data-section-header="false"><span>25</span>La Saint Julien</a>
+        <a href="#tune-plante-un-chou-fraternelle-des-cornemuses" data-toc-entry="true" data-group="group-1" data-toc-title="Plante un chou - Fraternelle des cornemuses" data-section-header="false"><span>26</span>Plante un chou - Fraternelle des cornemuses</a>
+        <a href="#tune-scottish-suite-en-flandre-et-canal-en-octobre" data-toc-entry="true" data-group="group-1" data-toc-title="SCOTTISH - Suite En Flandre et Canal en Octobre" data-section-header="true" class="section-header-toc-link">SCOTTISH - Suite En Flandre et Canal en Octobre</a>
+        <a href="#tune-retour-de-flandre" data-toc-entry="true" data-group="group-1" data-toc-title="Retour de Flandre" data-section-header="false"><span>27</span>Retour de Flandre</a>
+        <a href="#tune-le-canal-en-octobre" data-toc-entry="true" data-group="group-1" data-toc-title="Le Canal en Octobre" data-section-header="false"><span>28</span>Le Canal en Octobre</a>
+        <a href="#tune-valses-suite-sangshyttevalsen-far-away" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES - Suite Sangshyttevalsen + Far Away" data-section-header="true" class="section-header-toc-link">VALSES - Suite Sangshyttevalsen + Far Away</a>
+        <a href="#tune-sangshyttevalsen" data-toc-entry="true" data-group="group-1" data-toc-title="Sangshyttevalsen" data-section-header="false"><span>29</span>Sangshyttevalsen</a>
+        <a href="#tune-far-away" data-toc-entry="true" data-group="group-1" data-toc-title="Far Away" data-section-header="false"><span>30</span>Far Away</a>
+        <a href="#tune-valses-suite-ailes-du-moulin-et-boulogne" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES - Suite Ailes du Moulin et Boulogne" data-section-header="true" class="section-header-toc-link">VALSES - Suite Ailes du Moulin et Boulogne</a>
+        <a href="#tune-les-ailes-du-moulin" data-toc-entry="true" data-group="group-1" data-toc-title="Les Ailes du Moulin" data-section-header="false"><span>31</span>Les Ailes du Moulin</a>
+        <a href="#tune-boulogne" data-toc-entry="true" data-group="group-1" data-toc-title="Boulogne" data-section-header="false"><span>32</span>Boulogne</a>
+        <a href="#tune-valses-suite-flatworld-valse-harry-lane" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES - Suite Flatworld + Valse Harry Lane" data-section-header="true" class="section-header-toc-link">VALSES - Suite Flatworld + Valse Harry Lane</a>
+        <a href="#tune-flatworld" data-toc-entry="true" data-group="group-1" data-toc-title="Flatworld" data-section-header="false"><span>33</span>Flatworld</a>
+        <a href="#tune-valse-harry-lane" data-toc-entry="true" data-group="group-1" data-toc-title="Valse Harry Lane" data-section-header="false"><span>34</span>Valse Harry Lane</a>
+        <a href="#tune-valses-a-5-temps" data-toc-entry="true" data-group="group-1" data-toc-title="VALSES A 5 TEMPS" data-section-header="true" class="section-header-toc-link">VALSES A 5 TEMPS</a>
+        <a href="#tune-valse-a-5-temps" data-toc-entry="true" data-group="group-1" data-toc-title="Valse à 5 temps" data-section-header="false"><span>35</span>Valse à 5 temps</a>
+        <a href="#tune-valse-a-5-temps-et-contrechants" data-toc-entry="true" data-group="group-1" data-toc-title="Valse à 5 temps (et contrechants)" data-section-header="false"><span>36</span>Valse à 5 temps (et contrechants)</a>
+        <a href="#tune-historique-des-modifications" data-toc-entry="true" data-group="group-1" data-toc-title="Historique des modifications" data-section-header="true" class="section-header-toc-link">Historique des modifications</a>
     </div>
   </nav>
 
@@ -1454,35 +1673,6 @@
           
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
-      <article class="score-panel section-header-panel has-toc-link no-tune-number" id="tune-valses" data-group-panel="true" data-group="group-1">
-        <div class="section-header-main">
-          <div class="section-header-topline">
-            
-            <div class="tune-header no-tune-heading section-header-actions">
-          <a class="back-to-toc" data-toc-link="true" href="#table-of-contents">↑ Table of Contents</a>
-        </div>
-          </div>
-          <div class="section-header-title">VALSES</div>
-        </div>
-      </article>
-      <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
-      <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-flatworld" data-key="flatworld" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">29</div>
-        <div class="tune-header no-tune-heading">
-          
-          
-          <a class="back-to-toc" data-toc-link="true" href="#table-of-contents">↑ Table of Contents</a>
-        </div>
-        
-        
-        <div class="notation-wrap">
-          <div id="flatworld-paper" class="paper" aria-label="Flatworld notation"></div>
-        </div>
-        <div id="flatworld-audio" class="audio-controls"></div>
-          <p id="flatworld-status" class="status" aria-live="polite"></p>
-          
-      </article>
-      <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel section-header-panel has-toc-link no-tune-number" id="tune-valses-suite-sangshyttevalsen-far-away" data-group-panel="true" data-group="group-1">
         <div class="section-header-main">
           <div class="section-header-topline">
@@ -1496,7 +1686,7 @@
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-sangshyttevalsen" data-key="sangshyttevalsen" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">30</div>
+        <div class="chapter-label">29</div>
         <div class="tune-header no-tune-heading">
           
           
@@ -1513,7 +1703,7 @@
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-far-away" data-key="far-away" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">31</div>
+        <div class="chapter-label">30</div>
         <div class="tune-header no-tune-heading">
           
           
@@ -1542,7 +1732,7 @@
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-les-ailes-du-moulin" data-key="les-ailes-du-moulin" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">32</div>
+        <div class="chapter-label">31</div>
         <div class="tune-header no-tune-heading">
           
           
@@ -1559,7 +1749,7 @@
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-boulogne" data-key="boulogne" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">33</div>
+        <div class="chapter-label">32</div>
         <div class="tune-header no-tune-heading">
           
           
@@ -1572,6 +1762,52 @@
         </div>
         <div id="boulogne-audio" class="audio-controls"></div>
           <p id="boulogne-status" class="status" aria-live="polite"></p>
+          
+      </article>
+      <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
+      <article class="score-panel section-header-panel has-toc-link no-tune-number" id="tune-valses-suite-flatworld-valse-harry-lane" data-group-panel="true" data-group="group-1">
+        <div class="section-header-main">
+          <div class="section-header-topline">
+            
+            <div class="tune-header no-tune-heading section-header-actions">
+          <a class="back-to-toc" data-toc-link="true" href="#table-of-contents">↑ Table of Contents</a>
+        </div>
+          </div>
+          <div class="section-header-title">VALSES - Suite Flatworld + Valse Harry Lane</div>
+        </div>
+      </article>
+      <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
+      <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-flatworld" data-key="flatworld" data-group-panel="true" data-group="group-1">
+        <div class="chapter-label">33</div>
+        <div class="tune-header no-tune-heading">
+          
+          
+          <a class="back-to-toc" data-toc-link="true" href="#table-of-contents">↑ Table of Contents</a>
+        </div>
+        
+        
+        <div class="notation-wrap">
+          <div id="flatworld-paper" class="paper" aria-label="Flatworld notation"></div>
+        </div>
+        <div id="flatworld-audio" class="audio-controls"></div>
+          <p id="flatworld-status" class="status" aria-live="polite"></p>
+          
+      </article>
+      <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
+      <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-valse-harry-lane" data-key="valse-harry-lane" data-group-panel="true" data-group="group-1">
+        <div class="chapter-label">34</div>
+        <div class="tune-header no-tune-heading">
+          
+          
+          <a class="back-to-toc" data-toc-link="true" href="#table-of-contents">↑ Table of Contents</a>
+        </div>
+        
+        
+        <div class="notation-wrap">
+          <div id="valse-harry-lane-paper" class="paper" aria-label="Valse Harry Lane notation"></div>
+        </div>
+        <div id="valse-harry-lane-audio" class="audio-controls"></div>
+          <p id="valse-harry-lane-status" class="status" aria-live="polite"></p>
           
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
@@ -1588,7 +1824,7 @@
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-valse-a-5-temps" data-key="valse-a-5-temps" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">34</div>
+        <div class="chapter-label">35</div>
         <div class="tune-header no-tune-heading">
           
           
@@ -1605,7 +1841,7 @@
       </article>
       <div class="section-divider" data-group-divider="true" data-group="group-1" aria-hidden="true"><span>☘</span></div>
       <article class="score-panel toc-only-actions has-toc-link number-only-with-actions" id="tune-valse-a-5-temps-et-contrechants" data-key="valse-a-5-temps-et-contrechants" data-group-panel="true" data-group="group-1">
-        <div class="chapter-label">35</div>
+        <div class="chapter-label">36</div>
         <div class="tune-header no-tune-heading">
           
           
@@ -1950,7 +2186,7 @@ C:Trad.
 A:Flandre
 O:France
 S:Edmond de Coussemaker, "Chants populaires des Flamands de France", Gand 1856, LXXXI p.279
-D:CD "écoute la Flandre" Het Reuzekoor, Production Het Reuzekoor à Dunkerque, n.1
+%D:CD "écoute la Flandre" Het Reuzekoor, Production Het Reuzekoor à Dunkerque, n.1
 M:3/4
 L:1/8
 Q:1/4=160
@@ -2401,7 +2637,7 @@ R:Matelote
 C:Trad.
 O:Belgique
 A:Wallonie
-D:CD "écoute la Flandre" Het Reuzekoor, Production Het Reuzekoor à Dunkerque, n.3
+%D:CD "écoute la Flandre" Het Reuzekoor, Production Het Reuzekoor à Dunkerque, n.3
 M:2/4
 L:1/16
 Q:1/4=92
@@ -2499,8 +2735,8 @@ X:28
 T:L'Inconnu de Limoise
 R:Mazurka
 C:Jean-François "Maxou" HEINTZEN
-S:Trad. Magazine, Hors série "tablature1", 1995 /   et www.diatojo.com
-D:K7 "petite suite bourbonnaise", AMTA NC016 (1991)
+%S:Trad. Magazine, Hors série "tablature1", 1995 /   et www.diatojo.com
+%D:K7 "petite suite bourbonnaise", AMTA NC016 (1991)
 M:3/4
 L:1/8
 Q:1/4=130
@@ -2510,7 +2746,6 @@ G cd |: e2 ec fd |e3 e fg | f2 fe dc | d2 dG cd |
 e2 ec fd |e3 e fg | f2 fe dc |1d3G cd :|2 g3 e fg ] |
 |:ab c'b ab | g3 f ed | cB cd ec | G2 c2 B2 |
 A2 AB cd | c2 B2 A2 |1 B2 BA Bc | d3 e fg :|2 BA Bc de |c6 |]
-%http://www.diatojo.com/tablatures/l-inconnu-de-limoise/jean-francois-maxou-heintzen.html
 </script>
 
   <script type="text/plain" id="menuet-jdg-70-abc">
@@ -2874,7 +3109,7 @@ X:39
 T:Retour de Flandre
 T:En Flandre
 R:Scottish
-C:Frédéric PARIS (env. 1980)
+C:Frédéric PARIS
 O:France
 M:4/4
 L:1/8
@@ -2926,49 +3161,8 @@ Q:1/2=82
 K:Gmaj
 P:A
 D2 GA |: B3c cBAG | B3c cBAG | EFGB A3G |1 FGEF D2GA :|2 G8  ] |
+P:B
 |:d3c cBAG | d3c cBAG | EFGB A3G |1 FGEF D2Bc :|2 G8 ] |
-</script>
-
-  <script type="text/plain" id="flatworld-abc">
-X: 42
-%----------  spécifique au site https://michaeleskin.com/abctools/abctools.html
-%enable_hyperlinks
-%urladdtitle https://sessiontradaudomaroise.github.io/ Partitions <br>Session Trad Audomaroise <br> https://sessiontradaudomaroise.github.io/
-%urladdsubtitle https://sessiontradaudomaroise.github.io/ Ce cahier de répertoire contient quelques<br> morceaux particuliers joués lors de la <br>Session Trad Audomaroise mensuelle <br>et vient pour l'instant en complément<br> du cahier de répertoire de MaCPhee / Fan de Trad. <br> Remarques et suggestions à adresser à sessiontradaudomaroise@gmail.com
-%addtoc Sommaire
-%addlinkbacktotoc
-%addsortedindex Index alphabétique
-%urlpagefooter https://sessiontradaudomaroise.github.io/ JCC - Session Trad Audomaroise - $DATEYMD - Page $PAGENUMBER
-%---et pour des sections ou sets :  X:1   T:*titre
-%------------------------  à faire varier suivant besoins :
-%%oneperpage 0
-%------------------------ Attention, ne plus trier RBT, car ajouts de textes sous titres danses
-%%footer "JCC - Session Trad Audomaroise - $D - p$P"
-%%infoname B ""
-%%writefields BN 1
-%%writefields HQIDS 0
-%%infoname N "Note : "
-%%dateformat "%d/%m/%Y"
-%%infoline 1
-%%gchordfont * 10
-%soundfont fatboy
-%%MIDI program 0
-%%MIDI bassprog 0
-%%MIDI bassvol 64
-%%MIDI chordprog 0
-%%MIDI chordvol 64
-%reverb chamber 0.95 0.05
-T:Flatworld
-R:Valse
-C:Andy Cutting
-M: 3/4
-L: 1/8
-Q:1/4=140
-K: Am
-e de|:ce Be Ae|F2 AB cA|f2 fe dc|B3e de|
-ce Be Ae|F2 fe dc|BG Bd cB|1 A3e de:|2 A6||
-|:AB cA ag|f2 fe dc|Bc dB gf|e2 ed cB|AB cA fe|
-d2 dc BA|1 B2 Bd cd|B3B cB:|2 B2 Bd cB|A3||
 </script>
 
   <script type="text/plain" id="sangshyttevalsen-abc">
@@ -3146,8 +3340,7 @@ X:48
 T:Boulogne
 R:Valse
 C:Bernard Boulanger
-T:Boulogne sur Mer
-D:Album "Rue du Fief" La Piposa, Album "Vazaboire" Trio Meunier Villeneuve
+%D:Album "Rue du Fief" La Piposa, Album "Vazaboire" Trio Meunier Villeneuve
 M:3/4
 L:1/8
 Q:1/4=150
@@ -3156,6 +3349,90 @@ cB|c4Bc | B4AB | A2A2G2 | A4cB | c2d2e2 | f2e2c2 | d6- | d4Bc |
 e4cB | e4AB | e2A3G | A4cB | c2d2e2 | f2e2f2 | g6- | g4eg |
 g4eg | f4dg | c2A2c2 | d4cB | c2e2f2 | g2e2c2 | d6- | d4Bc |
 g4cB | g4AB | g2A2G2 | A4cB | c2d2e2 | f2e2d2 | c6- | c6 |]
+</script>
+
+  <script type="text/plain" id="flatworld-abc">
+X: 42
+%----------  spécifique au site https://michaeleskin.com/abctools/abctools.html
+%enable_hyperlinks
+%urladdtitle https://sessiontradaudomaroise.github.io/ Partitions <br>Session Trad Audomaroise <br> https://sessiontradaudomaroise.github.io/
+%urladdsubtitle https://sessiontradaudomaroise.github.io/ Ce cahier de répertoire contient quelques<br> morceaux particuliers joués lors de la <br>Session Trad Audomaroise mensuelle <br>et vient pour l'instant en complément<br> du cahier de répertoire de MaCPhee / Fan de Trad. <br> Remarques et suggestions à adresser à sessiontradaudomaroise@gmail.com
+%addtoc Sommaire
+%addlinkbacktotoc
+%addsortedindex Index alphabétique
+%urlpagefooter https://sessiontradaudomaroise.github.io/ JCC - Session Trad Audomaroise - $DATEYMD - Page $PAGENUMBER
+%---et pour des sections ou sets :  X:1   T:*titre
+%------------------------  à faire varier suivant besoins :
+%%oneperpage 0
+%------------------------ Attention, ne plus trier RBT, car ajouts de textes sous titres danses
+%%footer "JCC - Session Trad Audomaroise - $D - p$P"
+%%infoname B ""
+%%writefields BN 1
+%%writefields HQIDS 0
+%%infoname N "Note : "
+%%dateformat "%d/%m/%Y"
+%%infoline 1
+%%gchordfont * 10
+%soundfont fatboy
+%%MIDI program 0
+%%MIDI bassprog 0
+%%MIDI bassvol 64
+%%MIDI chordprog 0
+%%MIDI chordvol 64
+%reverb chamber 0.95 0.05
+T:Flatworld
+R:Valse
+C:Andy Cutting
+M: 3/4
+L: 1/8
+Q:1/4=140
+K: Am
+e de|:ce Be Ae|F2 AB cA|f2 fe dc|B3e de|
+ce Be Ae|F2 fe dc|BG Bd cB|1 A3e de:|2 A6||
+|:AB cA ag|f2 fe dc|Bc dB gf|e2 ed cB|AB cA fe|
+d2 dc BA|1 B2 Bd cd|B3B cB:|2 B2 Bd cB|A3||
+</script>
+
+  <script type="text/plain" id="valse-harry-lane-abc">
+X:1
+%----------  spécifique au site https://michaeleskin.com/abctools/abctools.html
+%enable_hyperlinks
+%urladdtitle https://sessiontradaudomaroise.github.io/ Partitions <br>Session Trad Audomaroise <br> https://sessiontradaudomaroise.github.io/
+%urladdsubtitle https://sessiontradaudomaroise.github.io/ Ce cahier de répertoire contient quelques<br> morceaux particuliers joués lors de la <br>Session Trad Audomaroise mensuelle <br>et vient pour l'instant en complément<br> du cahier de répertoire de MaCPhee / Fan de Trad. <br> Remarques et suggestions à adresser à sessiontradaudomaroise@gmail.com
+%addtoc Sommaire
+%addlinkbacktotoc
+%addsortedindex Index alphabétique
+%urlpagefooter https://sessiontradaudomaroise.github.io/ JCC - Session Trad Audomaroise - $DATEYMD - Page $PAGENUMBER
+%---et pour des sections ou sets :  X:1   T:*titre
+%------------------------  à faire varier suivant besoins :
+%%oneperpage 0
+%------------------------ Attention, ne plus trier RBT, car ajouts de textes sous titres danses
+%%footer "JCC - Session Trad Audomaroise - $D - p$P"
+%%infoname B ""
+%%writefields BN 1
+%%writefields HQIDS 0
+%%infoname N "Note : "
+%%dateformat "%d/%m/%Y"
+%%infoline 1
+%%gchordfont * 10
+%soundfont fatboy
+%%MIDI program 0
+%%MIDI bassprog 0
+%%MIDI bassvol 64
+%%MIDI chordprog 0
+%%MIDI chordvol 64
+%reverb chamber 0.95 0.05
+T:Valse Harry Lane
+C:Andy Cutting
+%N:The Rose of Raby - Robins Waltz - Waltz Harry Lane - Duo Bottasso@Loano, 2/1/2015 youtube
+M:3/4
+K:Am
+|:ec Ae Bc | d3d ed | c2B2A2 | ^GA Bd cB |
+ec Ae Bc | d3d ed | cB Ad Bc |1 A2AB cd :|2 A2c2B2 ]
+A2 (3Bcd (3efg|a6 | g3 a gf | e6 | \
+eg ^fg ec|B6 | cB AB cd   | BG (3cdc (3BcB |
+A2 (3Bcd (3efg|a6 | g3 a gf | e6 | \
+eg ^fg ec|B4 cd | e2 de Bc |  A3 B cd |]
 </script>
 
   <script type="text/plain" id="valse-a-5-temps-abc">
@@ -3248,8 +3525,8 @@ z|:z5|z5|z5|1z5:|2z5||
 %%newpage
 </script>
 
-  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=1782765840499"></script>
-  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=1782765840499"></script>
+  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-chord-intervals.js?cb=1782940598250"></script>
+  <script src="https://michaeleskin.com/abcjs-eskin-portable/dist/abcjs-eskin-portable-min.js?cb=1782940598250"></script>
   <script>
   (() => {
     "use strict";
@@ -3270,16 +3547,23 @@ z|:z5|z5|z5|1z5:|2z5||
     const defaultDisplayMode = "notation";
     const instrumentSelectorEnabled = true;
     const tuneGroupSelectorEnabled = false;
-    const tuneGroups = [{"id":"group-1","name":"All Tunes","count":35,"numberStart":1}];
+    const showMultipleTunes = true;
+    const tuneGroups = [{"id":"group-1","name":"All Tunes","count":36,"numberStart":1}];
     const firstTuneGroupId = "group-1";
-    const instrumentSelectorStorageKey = "abcjs-eskin-website-display-instrument:srbll5";
-    const tuneGroupStorageKey = "abcjs-eskin-website-tune-group:srbll5";
+    const instrumentSelectorStorageKey = "abcjs-eskin-website-display-instrument:1tjm4u";
+    const tuneGroupStorageKey = "abcjs-eskin-website-tune-group:1tjm4u";
     let activeTuneGroupId = firstTuneGroupId;
     let applyTocFilter = function() {};
     const abcToolsLinkMode = "disabled";
     const defaultABCToolsFormat = "noten";
     const showStringInstrumentTablatureNames = false;
     const cursorColor = "#00f000";
+    /*
+      Playback autoscroll view ahead customization:
+      top and bottom are viewport guard-band sizes in pixels. Increase bottom
+      if you want more upcoming notation to remain visible below the playback cursor.
+    */
+    const cursorAutoscrollGuardBand = {"top":80,"bottom":180};
     /*
       JavaScript default sound settings customization:
       These are the default sound settings exported from the Website Builder.
@@ -3606,6 +3890,7 @@ z|:z5|z5|z5|1z5:|2z5||
 
       async function selectSearchAllMatch(link) {
         if (!link) return;
+        if (!showMultipleTunes && link.dataset.sectionHeader === "true") return;
 
         const groupId = validTuneGroupId(link.dataset.group || "");
         const selector = document.getElementById("site-tune-group-selector");
@@ -3615,8 +3900,11 @@ z|:z5|z5|z5|1z5:|2z5||
 
         if (selector) selector.value = groupId;
         saveTuneGroup(groupId);
+        if (!showMultipleTunes && targetId) selectSingleWorkForTargetId(targetId);
         applyTuneGroup(groupId);
-        await renderAllWorks(currentInstrumentChoiceId());
+        const renderCompleted = await renderAllWorks(currentInstrumentChoiceId());
+
+        if (!showMultipleTunes && (!renderCompleted || !isCurrentSingleWorkTargetId(targetId))) return;
 
         if (targetId && scrollToTargetIdAfterLayout(targetId)) {
           stopAllPlayback();
@@ -3764,21 +4052,251 @@ z|:z5|z5|z5|1z5:|2z5||
       return scrollToTargetIdAfterLayout(getHashTargetId());
     }
 
+    function isSingleTuneSectionHeaderTarget(targetId) {
+      if (showMultipleTunes || !targetId) return false;
+      const targetHref = "#" + String(targetId || "").replace(/^#/, "");
+      return Array.from(document.querySelectorAll("[data-toc-entry='true']")).some(link =>
+        (link.getAttribute("href") || "") === targetHref && link.dataset.sectionHeader === "true"
+      );
+    }
+
     async function navigateToHashTarget() {
       const targetId = getHashTargetId();
-      if (!targetId) return false;
+      if (!targetId || isSingleTuneSectionHeaderTarget(targetId)) return false;
 
       const targetGroupId = groupIdForTargetId(targetId);
+      let renderCompleted = true;
       if (targetGroupId && targetGroupId !== activeTuneGroupId) {
         const selector = document.getElementById("site-tune-group-selector");
         if (selector) selector.value = targetGroupId;
         saveTuneGroup(targetGroupId);
+        if (!showMultipleTunes) selectSingleWorkForTargetId(targetId);
         applyTuneGroup(targetGroupId);
-        await renderAllWorks(currentInstrumentChoiceId());
+        renderCompleted = await renderAllWorks(currentInstrumentChoiceId());
+      } else if (!showMultipleTunes && selectSingleWorkForTargetId(targetId)) {
+        applyContentVisibility();
+        renderCompleted = await renderAllWorks(currentInstrumentChoiceId());
       }
+
+      if (!showMultipleTunes && (!renderCompleted || !isCurrentSingleWorkTargetId(targetId))) return false;
 
       stopAllPlayback();
       return scrollToTargetIdAfterLayout(targetId);
+    }
+
+    let activeTempoInput = null;
+
+    function tempoEntryValue(value) {
+      const text = String(value == null ? "" : value).trim();
+      if (!text) return null;
+
+      const parsed = Number(text);
+      if (!Number.isFinite(parsed)) return null;
+
+      const rounded = Math.round(parsed);
+      if (rounded < 5 || rounded > 400) return null;
+      return rounded;
+    }
+
+    function currentTempoValue(tempoInput) {
+      const fromInput = tempoEntryValue(tempoInput ? tempoInput.value : "");
+      if (fromInput !== null) return fromInput;
+      return 100;
+    }
+
+    function ensureTempoEntryDialog() {
+      let overlay = document.getElementById("tempo-entry-overlay");
+      if (overlay) return overlay;
+
+      overlay = document.createElement("div");
+      overlay.id = "tempo-entry-overlay";
+      overlay.className = "tempo-entry-overlay";
+      overlay.hidden = true;
+      overlay.innerHTML =
+        '<div class="tempo-entry-dialog" role="dialog" aria-modal="true" aria-labelledby="tempo-entry-title">' +
+          '<h2 id="tempo-entry-title">Set Tempo Percentage</h2>' +
+          '<div class="tempo-entry-field-row">' +
+            '<label for="tempo-entry-input">Tempo percentage:</label>' +
+            '<input id="tempo-entry-input" type="number" inputmode="numeric" min="5" max="400" step="1" autocomplete="off">' +
+            '<select id="tempo-entry-preset" class="tempo-entry-preset" aria-label="Preset tempo percentage">' +
+              '<option value="">Preset</option>' +
+              '<option value="25">25</option><option value="30">30</option><option value="40">40</option><option value="50">50</option><option value="60">60</option><option value="70">70</option><option value="75">75</option><option value="80">80</option><option value="85">85</option><option value="90">90</option><option value="95">95</option><option value="100">100</option><option value="125">125</option><option value="150">150</option><option value="175">175</option><option value="200">200</option>' +
+            '</select>' +
+          '</div>' +
+          '<p id="tempo-entry-error" class="tempo-entry-error" aria-live="polite"></p>' +
+          '<div class="tempo-entry-actions">' +
+            '<button type="button" class="tempo-entry-apply" id="tempo-entry-apply">Apply</button>' +
+            '<button type="button" class="tempo-entry-cancel" id="tempo-entry-cancel">Cancel</button>' +
+          '</div>' +
+        '</div>';
+
+      document.body.appendChild(overlay);
+
+      const input = overlay.querySelector("#tempo-entry-input");
+      const preset = overlay.querySelector("#tempo-entry-preset");
+      const applyButton = overlay.querySelector("#tempo-entry-apply");
+      const cancelButton = overlay.querySelector("#tempo-entry-cancel");
+
+      cancelButton.addEventListener("click", closeTempoEntryDialog);
+      applyButton.addEventListener("click", applyTempoEntryDialog);
+
+      preset.addEventListener("change", () => {
+        if (!preset.value) return;
+        input.value = preset.value;
+        input.focus({ preventScroll: true });
+        input.select();
+      });
+
+      input.addEventListener("input", () => {
+        if (preset && preset.value !== input.value) preset.value = "";
+      });
+
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          applyTempoEntryDialog();
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          closeTempoEntryDialog();
+        }
+      });
+
+      return overlay;
+    }
+
+    function openTempoEntryDialog(tempoInput) {
+      if (!tempoInput) return;
+
+      const overlay = ensureTempoEntryDialog();
+      const input = overlay.querySelector("#tempo-entry-input");
+      const preset = overlay.querySelector("#tempo-entry-preset");
+      activeTempoInput = tempoInput;
+      input.value = String(currentTempoValue(tempoInput));
+      if (preset) preset.value = "";
+      overlay.hidden = false;
+
+      /*
+        iOS only opens the on-screen keyboard when focus happens directly
+        inside the trusted tap/click handler. Do the first focus/select
+        synchronously, then repeat on the next frames only as a layout fallback.
+      */
+      input.focus({ preventScroll: true });
+      input.select();
+
+      requestAnimationFrame(() => {
+        input.focus({ preventScroll: true });
+        input.select();
+        requestAnimationFrame(() => {
+          input.focus({ preventScroll: true });
+          input.select();
+        });
+      });
+    }
+
+    function closeTempoEntryDialog() {
+      const overlay = document.getElementById("tempo-entry-overlay");
+      if (overlay) overlay.hidden = true;
+      activeTempoInput = null;
+    }
+
+    function applyTempoEntryDialog() {
+      const overlay = document.getElementById("tempo-entry-overlay");
+      if (!overlay || !activeTempoInput) return;
+
+      const input = overlay.querySelector("#tempo-entry-input");
+      const tempoValue = tempoEntryValue(input ? input.value : "");
+
+      if (tempoValue === null) {
+        closeTempoEntryDialog();
+        return;
+      }
+
+      activeTempoInput.value = String(tempoValue);
+      activeTempoInput.dispatchEvent(new Event("input", { bubbles: true }));
+      activeTempoInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+      closeTempoEntryDialog();
+    }
+
+    function findTempoInput(audioElement) {
+      if (!audioElement) return null;
+
+      return audioElement.querySelector(
+        "input.abcjs-midi-tempo," +
+        "input.abcjs-midi-current-tempo," +
+        ".abcjs-midi-tempo input," +
+        ".abcjs-midi-current-tempo input," +
+        ".abcjs-midi-current-tempo-wrapper input," +
+        ".abcjs-tempo-wrapper input," +
+        "input[type='number']," +
+        "input[type='text']"
+      );
+    }
+
+    function installTempoEntryDialog(audioElement) {
+      if (!audioElement) return false;
+
+      const tempoInput = findTempoInput(audioElement);
+      if (!tempoInput || tempoInput.dataset.tempoDialogInstalled === "true") return Boolean(tempoInput);
+
+      tempoInput.dataset.tempoDialogInstalled = "true";
+      tempoInput.readOnly = true;
+      tempoInput.setAttribute("readonly", "readonly");
+      tempoInput.setAttribute("inputmode", "numeric");
+      tempoInput.setAttribute("aria-label", "Open tempo percentage dialog");
+      tempoInput.title = "Click to set tempo percentage";
+
+      const openDialog = event => {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        openTempoEntryDialog(tempoInput);
+      };
+
+      tempoInput.addEventListener("pointerdown", openDialog);
+      tempoInput.addEventListener("mousedown", openDialog);
+      tempoInput.addEventListener("touchstart", openDialog, { passive: false });
+      tempoInput.addEventListener("focus", openDialog);
+      tempoInput.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
+      tempoInput.addEventListener("beforeinput", event => {
+        event.preventDefault();
+      });
+      tempoInput.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          openDialog(event);
+        } else if (event.key.length === 1 || event.key === "Backspace" || event.key === "Delete") {
+          event.preventDefault();
+        }
+      });
+
+      return true;
+    }
+
+    function installTempoEntryDialogWhenReady(audioElement) {
+      if (!audioElement) return;
+
+      if (installTempoEntryDialog(audioElement)) return;
+
+      let attempts = 0;
+      const retry = () => {
+        attempts += 1;
+        if (installTempoEntryDialog(audioElement) || attempts >= 20) return;
+        setTimeout(retry, 50);
+      };
+
+      requestAnimationFrame(retry);
+
+      if (typeof MutationObserver === "function") {
+        const observer = new MutationObserver(() => {
+          if (installTempoEntryDialog(audioElement)) observer.disconnect();
+        });
+        observer.observe(audioElement, { childList: true, subtree: true });
+        setTimeout(() => observer.disconnect(), 2000);
+      }
     }
 
     function installNavigation() {
@@ -3799,12 +4317,25 @@ z|:z5|z5|z5|1z5:|2z5||
       document.querySelectorAll(".toc-links a").forEach(link => {
         link.addEventListener("click", event => {
           event.preventDefault();
-          stopAllPlayback();
-          const href = link.getAttribute("href") || "";
-          const targetId = href.charAt(0) === "#" ? href.slice(1) : "";
-          if (targetId && scrollToTargetIdAfterLayout(targetId)) {
-            history.replaceState(null, "", "#" + targetId);
-          }
+          void (async () => {
+            const href = link.getAttribute("href") || "";
+            const targetId = href.charAt(0) === "#" ? href.slice(1) : "";
+            if (!showMultipleTunes && link.dataset.sectionHeader === "true") return;
+
+            stopAllPlayback();
+
+            let renderCompleted = true;
+            if (!showMultipleTunes && targetId && selectSingleWorkForTargetId(targetId)) {
+              applyContentVisibility();
+              renderCompleted = await renderAllWorks(currentInstrumentChoiceId());
+            }
+
+            if (!showMultipleTunes && (!renderCompleted || !isCurrentSingleWorkTargetId(targetId))) return;
+
+            if (targetId && scrollToTargetIdAfterLayout(targetId)) {
+              history.replaceState(null, "", "#" + targetId);
+            }
+          })();
         });
       });
 
@@ -3822,8 +4353,10 @@ z|:z5|z5|z5|1z5:|2z5||
 
     function keepCursorVisible(cursor, paper) {
       const cursorRect = cursor.getBoundingClientRect();
-      const viewportTop = 72;
-      const viewportBottom = window.innerHeight - 82;
+      const guardTop = Number(cursorAutoscrollGuardBand.top) || 72;
+      const guardBottom = Number(cursorAutoscrollGuardBand.bottom) || 82;
+      const viewportTop = guardTop;
+      const viewportBottom = Math.max(viewportTop + 80, window.innerHeight - guardBottom);
 
       if (cursorRect.top < viewportTop) {
         window.scrollBy({ top: cursorRect.top - viewportTop - 18, behavior: "smooth" });
@@ -3845,11 +4378,28 @@ z|:z5|z5|z5|1z5:|2z5||
 
     function createCursorControl(paperId, workKey) {
       let cursor = null;
+      let autoscrollFrame = 0;
       const paper = document.getElementById(paperId);
+
+      function scheduleCursorAutoscroll() {
+        if (!paper || !cursor || autoscrollFrame) return;
+
+        autoscrollFrame = requestAnimationFrame(() => {
+          autoscrollFrame = 0;
+          if (cursor && paper) keepCursorVisible(cursor, paper);
+        });
+      }
+
+      function cancelCursorAutoscroll() {
+        if (!autoscrollFrame) return;
+        cancelAnimationFrame(autoscrollFrame);
+        autoscrollFrame = 0;
+      }
 
       return {
         onStart() {
           stopOtherPlayback(workKey);
+          cancelCursorAutoscroll();
           const svg = paper ? paper.querySelector("svg") : null;
           if (!svg) return;
           svg.querySelectorAll(".abcjs-cursor").forEach(item => item.remove());
@@ -3865,9 +4415,10 @@ z|:z5|z5|z5|1z5:|2z5||
           cursor.setAttribute("x2", String(event.left - 2));
           cursor.setAttribute("y1", String(event.top));
           cursor.setAttribute("y2", String(event.top + event.height));
-          if (paper) keepCursorVisible(cursor, paper);
+          scheduleCursorAutoscroll();
         },
         onFinished() {
+          cancelCursorAutoscroll();
           if (cursor) cursor.remove();
           cursor = null;
         }
@@ -4050,6 +4601,7 @@ z|:z5|z5|z5|1z5:|2z5||
         const controller = new ABCJS.synth.SynthController();
         controller.load(cssIdSelector(audioId), createCursorControl(paperId, work.key), playerOptions);
         await controller.setTune(rendered[0], false, synthOptions);
+        installTempoEntryDialogWhenReady(audioElement);
         controllers.set(work.key, controller);
 
         if (paper) {
@@ -4182,9 +4734,97 @@ z|:z5|z5|z5|1z5:|2z5||
       }
     }
 
-    function getActiveWorks() {
+    let activeSingleWorkKey = "";
+    let visibleSingleWorkKey = "";
+
+    function getGroupWorks() {
       if (!tuneGroupSelectorEnabled) return works;
       return works.filter(work => work.groupId === activeTuneGroupId);
+    }
+
+    function workForTargetId(targetId) {
+      if (!targetId) return null;
+      const normalizedId = String(targetId || "").replace(/^#/, "");
+      return works.find(work => "tune-" + work.key === normalizedId) || null;
+    }
+
+    function ensureActiveSingleWorkKey() {
+      if (showMultipleTunes) return "";
+      const groupWorks = getGroupWorks();
+      if (activeSingleWorkKey && groupWorks.some(work => work.key === activeSingleWorkKey)) {
+        return activeSingleWorkKey;
+      }
+      activeSingleWorkKey = groupWorks.length ? groupWorks[0].key : "";
+      return activeSingleWorkKey;
+    }
+
+    function applyContentVisibility() {
+      if (showMultipleTunes) {
+        document.querySelectorAll("[data-group-panel='true'], [data-group-divider='true']").forEach(element => {
+          element.hidden = tuneGroupSelectorEnabled && element.dataset.group !== activeTuneGroupId;
+        });
+
+        works.forEach(work => {
+          if (tuneGroupSelectorEnabled && work.groupId !== activeTuneGroupId) clearWorkRender(work);
+        });
+        return;
+      }
+
+      const activeKey = ensureActiveSingleWorkKey();
+      if (!visibleSingleWorkKey || !works.some(work => work.key === visibleSingleWorkKey)) {
+        visibleSingleWorkKey = activeKey;
+      }
+
+      document.querySelectorAll("[data-group-divider='true']").forEach(element => {
+        element.hidden = true;
+      });
+
+      document.querySelectorAll("article.score-panel[data-group-panel='true']").forEach(panel => {
+        const key = panel.dataset.key || "";
+        panel.hidden = !key || (key !== activeKey && key !== visibleSingleWorkKey);
+      });
+
+      works.forEach(work => {
+        if (work.key !== activeKey && work.key !== visibleSingleWorkKey) clearWorkRender(work);
+      });
+    }
+
+    function finishSingleTuneDisplaySwap() {
+      if (showMultipleTunes) return;
+      visibleSingleWorkKey = ensureActiveSingleWorkKey();
+
+      document.querySelectorAll("article.score-panel[data-group-panel='true']").forEach(panel => {
+        const key = panel.dataset.key || "";
+        panel.hidden = !key || key !== visibleSingleWorkKey;
+      });
+
+      works.forEach(work => {
+        if (work.key !== visibleSingleWorkKey) clearWorkRender(work);
+      });
+    }
+
+    function selectSingleWorkForTargetId(targetId) {
+      if (showMultipleTunes) return false;
+      const work = workForTargetId(targetId);
+      if (!work) return false;
+      activeSingleWorkKey = work.key;
+      return true;
+    }
+
+    function isCurrentSingleWorkTargetId(targetId) {
+      if (showMultipleTunes) return true;
+      const work = workForTargetId(targetId);
+      if (!work) return false;
+      if (work.key !== activeSingleWorkKey) return false;
+      return !tuneGroupSelectorEnabled || work.groupId === activeTuneGroupId;
+    }
+
+    function getActiveWorks() {
+      const groupWorks = getGroupWorks();
+      if (showMultipleTunes) return groupWorks;
+
+      const activeKey = ensureActiveSingleWorkKey();
+      return groupWorks.filter(work => work.key === activeKey);
     }
 
     function currentInstrumentChoiceId() {
@@ -4195,15 +4835,7 @@ z|:z5|z5|z5|1z5:|2z5||
     function applyTuneGroup(groupId) {
       activeTuneGroupId = validTuneGroupId(groupId);
       updateTableOfContentsTitle(activeTuneGroupId);
-
-      document.querySelectorAll("[data-group-panel='true'], [data-group-divider='true']").forEach(element => {
-        element.hidden = tuneGroupSelectorEnabled && element.dataset.group !== activeTuneGroupId;
-      });
-
-      works.forEach(work => {
-        if (tuneGroupSelectorEnabled && work.groupId !== activeTuneGroupId) clearWorkRender(work);
-      });
-
+      applyContentVisibility();
       applyTocFilter();
     }
 
@@ -4235,25 +4867,56 @@ z|:z5|z5|z5|1z5:|2z5||
       return savedGroupId;
     }
 
+    let renderAllWorksRequestId = 0;
+    let renderAllWorksQueue = Promise.resolve(true);
+
     async function renderAllWorks(choiceId) {
+      const requestId = ++renderAllWorksRequestId;
+
+      if (!showMultipleTunes) {
+        renderAllWorksQueue = renderAllWorksQueue
+          .catch(() => false)
+          .then(() => renderAllWorksNow(choiceId, requestId));
+        return renderAllWorksQueue;
+      }
+
+      return renderAllWorksNow(choiceId, requestId);
+    }
+
+    async function renderAllWorksNow(choiceId, requestId) {
+      const isStaleSingleTuneRender = () => !showMultipleTunes && requestId !== renderAllWorksRequestId;
+      if (isStaleSingleTuneRender()) return false;
+
       const selector = document.getElementById("site-instrument-selector");
       const groupSelector = document.getElementById("site-tune-group-selector");
       const activeChoiceId = validInstrumentChoiceId(choiceId);
+      applyContentVisibility();
+      if (isStaleSingleTuneRender()) return false;
+
       const activeWorks = getActiveWorks();
       const showWorkingBanner = activeWorks.length > 0;
 
       if (selector) selector.disabled = true;
       if (groupSelector) groupSelector.disabled = true;
-      if (showWorkingBanner) {
-        setInstrumentWorkingBannerVisible(true);
-        await waitForWorkingBannerPaint();
-      }
-
-      stopAllPlayback();
-      updateABCTranscriptionToolsLinks(activeChoiceId);
 
       try {
-        for (const work of activeWorks) await prepareWork(work, activeChoiceId);
+        if (showWorkingBanner) {
+          setInstrumentWorkingBannerVisible(true);
+          await waitForWorkingBannerPaint();
+        }
+
+        if (isStaleSingleTuneRender()) return false;
+
+        stopAllPlayback();
+        updateABCTranscriptionToolsLinks(activeChoiceId);
+
+        for (const work of activeWorks) {
+          if (isStaleSingleTuneRender()) return false;
+          await prepareWork(work, activeChoiceId);
+          if (isStaleSingleTuneRender()) return false;
+        }
+        finishSingleTuneDisplaySwap();
+        return true;
       } finally {
         if (selector) selector.disabled = false;
         if (groupSelector) groupSelector.disabled = false;
@@ -4288,12 +4951,20 @@ z|:z5|z5|z5|1z5:|2z5||
       const initialHashTargetId = getHashTargetId();
       const initialHashGroupId = groupIdForTargetId(initialHashTargetId);
       const savedTuneGroupId = initializeTuneGroupSelector(initialHashGroupId);
+      if (!showMultipleTunes && initialHashTargetId) selectSingleWorkForTargetId(initialHashTargetId);
       applyTuneGroup(savedTuneGroupId);
       installNavigation();
 
       const savedInstrumentChoiceId = initializeInstrumentSelector();
-      await renderAllWorks(savedInstrumentChoiceId);
-      if (initialHashTargetId) scrollToCurrentHashAfterLayout();
+      const initialRenderCompleted = await renderAllWorks(savedInstrumentChoiceId);
+      if (
+        initialHashTargetId &&
+        initialRenderCompleted &&
+        !isSingleTuneSectionHeaderTarget(initialHashTargetId) &&
+        (showMultipleTunes || isCurrentSingleWorkTargetId(initialHashTargetId))
+      ) {
+        scrollToCurrentHashAfterLayout();
+      }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
